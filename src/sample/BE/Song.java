@@ -50,6 +50,22 @@ public class Song {
         this.filePath = filePath;
     }
 
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
+    public int getSecond() {
+        return second;
+    }
+
+    public void setSecond(int second) {
+        this.second = second;
+    }
+
     public int getId() {
         return id;
     }

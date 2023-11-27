@@ -7,18 +7,18 @@ import java.util.List;
 public class SongDAO implements ISongDataAccess {
 
     @Override
-    public List<Song> getAllSongs() throws Exception {
+    public List<Song> readAllSongs() throws Exception {
         return null;
     }
 
     @Override
-    public Song getSong(Song song) throws Exception {
+    public Song readSong(Song song) throws Exception {
         return null;
     }
 
     @Override
-    public Song createSong(Song song) throws Exception {
-        return null;
+    public void createSong(Song song) throws Exception {
+
     }
 
     @Override
