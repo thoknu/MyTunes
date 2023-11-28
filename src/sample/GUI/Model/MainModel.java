@@ -22,6 +22,8 @@ public class MainModel {
         availablePlaylists.addAll(playlistManager.getAllPlaylists());
         availableSongs = FXCollections.observableArrayList();
         availableSongs.addAll(songManager.getAllSongs());
+
+
     }
     public ObservableList<Playlist> getObservablePlaylists() {
         return availablePlaylists;
@@ -34,6 +36,7 @@ public class MainModel {
 
     public List<Song> getAllSongsInPlaylist(Playlist playlist) throws Exception {
         return playlistManager.getAllSongsInPlaylist(playlist);
+
     }
 
     public Song getSong(Playlist playlist, Song song) throws Exception {

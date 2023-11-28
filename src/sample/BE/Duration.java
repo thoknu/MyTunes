@@ -11,6 +11,10 @@ public class Duration {
 
     }
 
+    public Duration (int second){
+
+    }
+
     public int getHour() {
         return hour;
     }

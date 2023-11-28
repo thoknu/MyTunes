@@ -7,7 +7,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import sample.BE.Playlist;
+import sample.BE.Song;
 import sample.GUI.Model.MainModel;
 
 import java.io.IOException;
@@ -27,16 +30,32 @@ public class MainController implements Initializable {
     @FXML
     private ListView lvSongsInPlaylist;
     @FXML
-    private TableView tvPlaylists;
+    private TableView<Playlist> tvPlaylists;
     @FXML
-    private TableView tvSongs;
+    private TableColumn<Playlist,String> colName;
+    @FXML
+    private TableColumn<Playlist,String> colSongs;
+    @FXML
+    private TableColumn<Playlist,Integer> colPlaylistTime;
+    @FXML
+    private TableView<Song> tvSongs;
+    @FXML
+    private TableColumn<Song,String> colTitle;
+    @FXML
+    private TableColumn<Song,String> colArtist;
+    @FXML
+    private TableColumn<Song,String> colCategory;
+    @FXML
+    private TableColumn<Song,Integer> colTime;
+
+
     private MainModel mainModel;
 
     public MainController() {
-
         try {
             mainModel = new MainModel();
         } catch (Exception e) {
+            System.err.println("Error creating MainModel: " + e.getMessage());
             displayError(e);
             e.printStackTrace();
         }
@@ -114,8 +133,21 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        // Initialize the table with the four columns.
+        colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
+        colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        colTime.setCellValueFactory(new PropertyValueFactory<>("time"));
+
+        // Add data from observable list
         tvSongs.setItems(mainModel.getObservableSongs());
+
         tvPlaylists.setItems(mainModel.getObservablePlaylists());
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colSongs.setCellValueFactory(new PropertyValueFactory<>("songs"));
+        colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("time"));
+
     }
 
     private void displayError(Throwable t) {

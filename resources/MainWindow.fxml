@@ -15,8 +15,8 @@
       <ListView fx:id="lvSongsInPlaylist" layoutX="431.0" layoutY="157.0" prefHeight="524.0" prefWidth="299.0" />
       <TableView fx:id="tvPlaylists" layoutX="51.0" layoutY="157.0" prefHeight="524.0" prefWidth="340.0">
         <columns>
-          <TableColumn prefWidth="165.0" text="Name" />
-          <TableColumn prefWidth="73.0" text="Songs" />
+          <TableColumn fx:id="colName" prefWidth="165.0" text="Name" />
+          <TableColumn fx:id="colSongs" prefWidth="73.0" text="Songs" />
             <TableColumn minWidth="0.0" prefWidth="101.0" text="Time" />
         </columns>
          <columnResizePolicy>
@@ -25,10 +25,10 @@
       </TableView>
       <TableView fx:id="tvSongs" layoutX="809.0" layoutY="157.0" prefHeight="524.0" prefWidth="503.0">
         <columns>
-          <TableColumn prefWidth="178.0" text="Title" />
-          <TableColumn prefWidth="112.0" text="Artist" />
-            <TableColumn prefWidth="73.0" text="Category" />
-            <TableColumn prefWidth="75.0" text="Time" />
+          <TableColumn fx:id="colTitle" prefWidth="178.0" text="Title" />
+          <TableColumn fx:id="colArtist" prefWidth="112.0" text="Artist" />
+            <TableColumn fx:id="colCategory" prefWidth="73.0" text="Category" />
+            <TableColumn fx:id="colTime" prefWidth="75.0" text="Time" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -9,13 +9,23 @@ public class Song {
     private int second;
     private int id;
 
-    public Song(String title, String artist, String category, String filePath, int minute, int second, int id) {
+    public Song(String title, String artist, String category, String filePath,int second, int id) {
         setTitle(title);
         setArtist(artist);
         setCategory(category);
         setFilePath(filePath);
         setId(id);
-        Duration duration = new Duration(minute, second);
+        // Duration duration = new Duration(second);
+    }
+
+    @Override
+    public String toString() {
+        return title +": "
+                + artist + ": "
+                + category + ": "
+                + filePath + ": "
+                + second + ": "
+                + id + ": ";
     }
 
     public String getTitle() {
