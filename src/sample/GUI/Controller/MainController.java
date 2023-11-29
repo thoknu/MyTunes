@@ -52,10 +52,10 @@ public class MainController implements Initializable {
     private MainModel mainModel;
 
     public MainController() {
+
         try {
             mainModel = new MainModel();
         } catch (Exception e) {
-            System.err.println("Error creating MainModel: " + e.getMessage());
             displayError(e);
             e.printStackTrace();
         }

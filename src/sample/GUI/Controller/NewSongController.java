@@ -28,7 +28,6 @@ public class NewSongController {
         String time = txtfTime.getText();
         String filePath = txtfFilePath.getText();
 
-        // Validate inputs (you might want to show an error message to the user if any of the fields are empty)
 
         int durationInSeconds = newSongModel.calculateSecondsFromUserInput(time);
 
