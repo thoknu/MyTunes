@@ -1,9 +1,8 @@
 package sample.DAL;
 
-import sample.BE.Duration;
+
 import sample.BE.Song;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,7 @@ public class SongDAO implements ISongDataAccess {
     }
 
     @Override
-    public void createSong(Song song) throws Exception {
+    public Song createSong(Song song) throws Exception {
 
         String sql = "INSERT INTO dbo.Songs (title,artist,category,time) VALUES (?,?,?,?);";
 
@@ -70,6 +69,12 @@ public class SongDAO implements ISongDataAccess {
 
             Song createdSong = new Song(song.getTitle(), song.getArtist(), song.getCategory(),song.getFilePath(), song.getSecond(), id);
 
+            return createdSong;
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            throw new Exception("Couldn't create song");
         }
 
 

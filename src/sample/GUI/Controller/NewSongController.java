@@ -21,18 +21,23 @@ public class NewSongController {
     private NewSongModel newSongModel;
 
     public void onSaveSong(ActionEvent actionEvent) {
-        // newSongModel.createSong(txtfTitle.getText(), txtfArtist.getText(), cbCategory.getValue().toString(), txtfTime.getText(), txtfFilePath.getText());
+         // newSongModel.createSong(txtfTitle.getText(), txtfArtist.getText(), cbCategory.getValue().toString(), txtfTime.getText(), txtfFilePath.getText());
         String title = txtfTitle.getText();
         String artist = txtfArtist.getText();
         String category = (String) cbCategory.getValue();  // Skal lige testes, er cast til at være en String og ikke object.
         String time = txtfTime.getText();
         String filePath = txtfFilePath.getText();
 
+        try {
 
-        int durationInSeconds = newSongModel.calculateSecondsFromUserInput(time);
+            int durationInSeconds = newSongModel.calculateSecondsFromUserInput(time);
+            Song newSong = new Song(title, artist, category,filePath,durationInSeconds,0);
 
-        // Pass the converted value down to the next layer (NewSongModel or SongManager)
-        newSongModel.createSong(title, artist, category, durationInSeconds, filePath);
+
+            newSongModel.createNewSong(newSong);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

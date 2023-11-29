@@ -21,7 +21,7 @@ public class MainModel {
         availablePlaylists = FXCollections.observableArrayList();
         availablePlaylists.addAll(playlistManager.getAllPlaylists());
         availableSongs = FXCollections.observableArrayList();
-        availableSongs.addAll(songManager.getAllSongs());
+        availableSongs.addAll(songManager.readAllSongs());
 
 
     }

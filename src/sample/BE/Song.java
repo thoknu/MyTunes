@@ -16,6 +16,7 @@ public class Song {
         setFilePath(filePath);
         setId(id);
         // Duration duration = new Duration(second);
+        // need to get time from the controller in seconds.
     }
 
     @Override

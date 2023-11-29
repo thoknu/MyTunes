@@ -1,20 +1,56 @@
 package sample.GUI.Model;
 
+import javafx.collections.ObservableList;
 import sample.BE.Song;
+import sample.BLL.SongManager;
 import sample.DAL.SongDAO;
 
-public class NewSongModel {
-    private SongDAO songDAO;
+import java.util.List;
 
-    public void createSong(String title, String artist, String category, int time, String filePath) {
-        // Song song = new Song(title, artist, category, time, filePath)
+public class NewSongModel {
+    private SongManager songManager;
+
+    private ObservableList<Song> songsToBeViewed;
+
+    public void createNewSong(Song newSong) throws Exception {
+        Song song = songManager.createNewSong(newSong);
+        songsToBeViewed.add(song);
     }
+    public void searchSong (String query) throws Exception{
+        List<Song> searchResults = songManager.searchSongs(query);
+        songsToBeViewed.clear();
+        songsToBeViewed.addAll(searchResults);
+    }
+
+    public void updateSong(Song updatedSong) throws Exception{
+        songManager.updateSong(updatedSong);
+        // update song in DAL, through all the layers.
+        Song s = songsToBeViewed.get(songsToBeViewed.indexOf(updatedSong));
+
+        // Update observable list and UI
+        s.setTitle(updatedSong.getTitle());
+        s.setArtist(updatedSong.getArtist());
+        s.setCategory(updatedSong.getCategory());
+        s.setFilePath(updatedSong.getFilePath());
+        s.setSecond(updatedSong.getSecond());
+
+    }
+
+    public void deleteSong(Song selectedSong)throws Exception {
+        // Deletes song in DAL
+        songManager.deleteSong(selectedSong);
+        // removes it from observable list and UI.
+        songsToBeViewed.remove(selectedSong);
+
+    }
+
+
     public int calculateSecondsFromUserInput(String timeFromUser){
         int calculatedSeconds = 0;
         String[] timeParts = timeFromUser.split("[\\s:,;.-]+");
 
         if (timeParts.length < 2 || timeParts.length > 3) {
-            // Handle invalid input format, throw an exception, or provide a default value
+            // Handle invalid input format
             throw new IllegalArgumentException("Invalid time format: " + timeFromUser);
         }
 

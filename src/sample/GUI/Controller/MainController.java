@@ -148,6 +148,10 @@ public class MainController implements Initializable {
         colSongs.setCellValueFactory(new PropertyValueFactory<>("songs"));
         colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("time"));
 
+        // need to implement listeners for selected songs etc.
+
+        // need to setup context search (look movie-MRS Controller)
+
     }
 
     private void displayError(Throwable t) {
