@@ -14,18 +14,18 @@ import java.sql.Connection;
 import java.util.Properties;
 
 public class DatabaseConnector {
-    private static final String PROP_FILE = "mytunes/config/config.settings";
+    private static final String PROP_FILE = "config/config.settings";
     private SQLServerDataSource dataSource;
 
     public DatabaseConnector() throws IOException {
         Properties databaseProperties = new Properties();
-        databaseProperties.load(new FileInputStream(new File("mytunes/config/config.settings")));
+        databaseProperties.load(new FileInputStream(new File("config/config.settings")));
         this.dataSource = new SQLServerDataSource();
         this.dataSource.setServerName(databaseProperties.getProperty("Server"));
         this.dataSource.setDatabaseName(databaseProperties.getProperty("Database"));
         this.dataSource.setUser(databaseProperties.getProperty("User"));
         this.dataSource.setPassword(databaseProperties.getProperty("Password"));
-        this.dataSource.setPortNumber(1433);
+        this.dataSource.setPortNumber(Integer.parseInt(databaseProperties.getProperty("Port")));
         this.dataSource.setTrustServerCertificate(true);
     }
 

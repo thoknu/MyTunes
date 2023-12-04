@@ -1,65 +1,58 @@
 package sample.BE;
 
-import sample.BLL.PlaylistManager;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Playlist {
-    private String name;
-    private List<Song> songs;
-    private int hour;
-    private int minute;
-    private int second;
-    private int id;
+    private SimpleIntegerProperty id = new SimpleIntegerProperty();
+    private SimpleStringProperty name = new SimpleStringProperty();
+    private SimpleIntegerProperty songCount = new SimpleIntegerProperty();
 
-    public Playlist(String name, int hour, int minute, int second, int id) {
-        setName(name);
-        setHour(hour);
-        setMinute(minute);
-        setSecond(second);
+    public Playlist(int id, String name, int songCount) {
         setId(id);
-        songs = new ArrayList<>();
-        Duration duration = new Duration(hour, minute, second);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getHour() {
-        return hour;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public void setMinute(int minute) {
-        this.minute = minute;
-    }
-
-    public int getSecond() {
-        return second;
-    }
-
-    public void setSecond(int second) {
-        this.second = second;
+        setName(name);
+        this.songCount.set(songCount);
     }
 
     public int getId() {
-        return id;
+        return id.get();
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);
+    }
+
+    public SimpleIntegerProperty idProperty() {
+        return id;
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public int getSongCount() {
+        return songCount.get();
+    }
+
+    public void setSongCount(int songCount) {
+        this.songCount.set(songCount);
+    }
+
+    public SimpleIntegerProperty songCountProperty() {
+        return songCount;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Playlist{id=%d, name='%s'}", getId(), getName());
     }
 }

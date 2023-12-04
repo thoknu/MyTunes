@@ -1,44 +1,143 @@
 package sample.DAL;
 
 import sample.BE.Playlist;
-import sample.BE.Song;
+import sample.BE.SongsInPlaylist;
 
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlaylistDAO implements IPlaylistDataAccess {
 
+    private final DatabaseConnector databaseConnector;
+
+    public PlaylistDAO() throws Exception
+    {
+        databaseConnector = new DatabaseConnector();
+    }
+
     @Override
-    public List<Playlist> readAllPlaylists() throws Exception {
+    public List<Playlist> readAllPlaylists() {
+        List<Playlist> allPlaylists = new ArrayList<>();
+
+        try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "SELECT PlaylistID, Name, (SELECT COUNT(*) FROM PlaylistSongs WHERE PlaylistID = p.PlaylistID) AS SongCount FROM Playlists p";
+            //
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("PlaylistID");
+                    String name = resultSet.getString("Name");
+                    int songCount = resultSet.getInt("SongCount");
+                    Playlist playlist = new Playlist(id, name, songCount);
+                    allPlaylists.add(playlist);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetchign playlists:" + e.getMessage(), e);
+        }
+        return allPlaylists;
+    }
+
+    @Override
+    public Playlist createPlaylist(String name) throws SQLException {
+        /*try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "INSERT INTO Playlists (Name) VALUES (?)";
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, name);
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating playlist failed, no rows affected.");
+            }
+
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next()) {
+                    int id = keys.getInt(1);
+                    return new Playlist(id, name, );
+                } else {
+                    throw new SQLException("Creating playlist failed, no ID obtained.");
+                }
+            }
+        }*/
         return null;
     }
 
+
     @Override
-    public List<Song> readAllSongsInPlaylist(Playlist playlist) throws Exception {
-        return null;
+    public void updatePlaylist(Playlist selectedPlaylist) throws Exception {
+        try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "UPDATE Playlists SET Name = ? WHERE PlaylistID = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, selectedPlaylist.getName());
+            pstmt.setInt(2, selectedPlaylist.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Song readSongInPlaylist(Playlist playlist, Song song) throws Exception {
-        return null;
+    public void deletePlaylist(int id) throws SQLException {
+        String sql = "DELETE FROM Playlists WHERE PlaylistID = ?";
+        try (Connection connection = databaseConnector.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Playlist readPlaylist(Playlist playlist) throws Exception {
-        return null;
+    public List<SongsInPlaylist> readAllSongsInPlaylist(Playlist playlist) throws SQLException {
+        if (playlist == null) {
+            throw new IllegalArgumentException("Playlist cannot be null.");
+        }
+
+        List<SongsInPlaylist> allSongsInPlaylist = new ArrayList<>();
+        String sql = "SELECT SongsInPlaylist.SongID, Songs.Title, Songs.Time FROM SongsInPlaylist " +
+                "INNER JOIN Songs ON SongsInPlaylist.SongID = Songs.SongID WHERE PlaylistID = ?";
+        try (Connection connection = databaseConnector.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setInt(1, playlist.getId());
+            try (ResultSet resultSet = pstmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int songID = resultSet.getInt("SongID");
+                    String title = resultSet.getString("Title");
+                    String source = resultSet.getString("Source");
+                    SongsInPlaylist songsInPlaylist = new SongsInPlaylist(playlist.getId(), songID, title, source);
+                    allSongsInPlaylist.add(songsInPlaylist);
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error reading songs from playlist: " + e.getMessage(), e);
+        }
+        return allSongsInPlaylist;
+    }
+
+
+
+    @Override
+    public void addSongToPlaylist(int playlistID, int songID) throws SQLException {
+        try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "INSERT INTO PlaylistSongs (PlaylistID, SongID) VALUES (?, ?)";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, playlistID);
+            pstmt.setInt(2, songID);
+            pstmt.executeUpdate();
+        }
     }
 
     @Override
-    public void createPlaylist(Playlist playlist) throws Exception {
-
-    }
-
-    @Override
-    public void updatePlaylist(Playlist playlist) throws Exception {
-
-    }
-
-    @Override
-    public void deletePlaylist(Playlist playlist) throws Exception {
-
+    public void removeSongFromPlaylist(int playlistID, int songID) throws SQLException {
+        try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "DELETE FROM PlaylistSongs WHERE PlaylistID = ? AND SongID = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, playlistID);
+            pstmt.setInt(2, songID);
+            pstmt.executeUpdate();
+        }
     }
 }

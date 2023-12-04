@@ -1,46 +1,56 @@
 package sample.BLL;
 
 import sample.BE.Playlist;
-import sample.BE.Song;
+import sample.BE.SongsInPlaylist;
 import sample.DAL.PlaylistDAO;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 public class PlaylistManager {
-    private PlaylistDAO playlistDAO;
+    private final PlaylistDAO playlistDAO;
 
-    public PlaylistManager() {
-        playlistDAO = new PlaylistDAO();
+    public PlaylistManager() throws Exception {
+        this.playlistDAO = new PlaylistDAO();
     }
 
     public List<Playlist> getAllPlaylists() throws Exception {
         return playlistDAO.readAllPlaylists();
     }
 
-    public List<Song> getAllSongsInPlaylist(Playlist playlist) throws Exception {
-        List<Song> readSongs = playlistDAO.readAllSongsInPlaylist(playlist);
-        List<Song> songs = new ArrayList<>();
-        for (Song s : readSongs) {
-            songs.add(s);
+    public Playlist createPlaylist(String name) throws SQLException {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Playlist name cannot be null or empty.");
         }
-        return null;
+        return playlistDAO.createPlaylist(name);
     }
 
-    public Song getSong(Playlist playlist, Song song) throws Exception {
-        for (Song s : playlistDAO.readAllSongsInPlaylist(playlist)) {
-            if (s.getId() == song.getId()) {
-                return s;
-            }
+    public void editPlaylist(Playlist selectedPlaylist) throws Exception {
+        if (selectedPlaylist == null) {
+            throw new IllegalArgumentException("Selected playlist cannot be null.");
         }
-        return null;
+        playlistDAO.updatePlaylist(selectedPlaylist);
     }
 
-    public void CalculateDurationOfSong(Song song) {
-
+    public void deletePlaylist(Playlist playlist) throws SQLException {
+        if (playlist == null) {
+            throw new IllegalArgumentException("Playlist to delete cannot be null.");
+        }
+        playlistDAO.deletePlaylist(playlist.getId());
     }
 
-    public void CalculateDurationOfPlaylist(Playlist playlist) {
+    public List<SongsInPlaylist> getAllSongsInPlaylist(Playlist playlist) throws Exception {
+        if (playlist == null) {
+            throw new IllegalArgumentException("Playlist cannot be null.");
+        }
+        return playlistDAO.readAllSongsInPlaylist(playlist);
+    }
 
+    public void addSongToPlaylist(int playlistID, int songID) throws SQLException {
+        playlistDAO.addSongToPlaylist(playlistID, songID);
+    }
+
+    public void removeSongFromPlaylist(int playlistID, int songID) throws SQLException {
+        playlistDAO.removeSongFromPlaylist(playlistID, songID);
     }
 }

@@ -1,22 +1,28 @@
 package sample.DAL;
 
 import sample.BE.Playlist;
-import sample.BE.Song;
+import sample.BE.SongsInPlaylist;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface IPlaylistDataAccess {
-    public List<Playlist> readAllPlaylists() throws Exception;
+    public List<Playlist> readAllPlaylists();
 
-    public Playlist readPlaylist(Playlist playlist) throws Exception;
+    public Playlist createPlaylist(String name) throws SQLException;
 
-    public List<Song> readAllSongsInPlaylist(Playlist playlist) throws Exception;
+    public void updatePlaylist(Playlist selectedPlaylist) throws Exception;
 
-    public Song readSongInPlaylist(Playlist playlist, Song song) throws Exception;
+    public void deletePlaylist(int id) throws Exception;
 
-    public void createPlaylist(Playlist playlist) throws Exception;
+    //public Playlist readPlaylist(Playlist playlist) throws Exception;
 
-    public void updatePlaylist(Playlist playlist) throws Exception;
+    public List<SongsInPlaylist> readAllSongsInPlaylist(Playlist playlist) throws Exception;
 
-    public void deletePlaylist(Playlist playlist) throws Exception;
+    //public Song readSongInPlaylist(Playlist playlist, Song song) throws Exception;
+
+    public void addSongToPlaylist(int playlistID, int songID) throws SQLException;
+
+    public void removeSongFromPlaylist(int playlistID, int songID) throws SQLException;
+
 }
