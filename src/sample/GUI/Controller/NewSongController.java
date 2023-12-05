@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import sample.BE.Song;
 import sample.GUI.Model.NewSongModel;
 
@@ -21,7 +22,6 @@ public class NewSongController {
     private NewSongModel newSongModel;
 
     public void onSaveSong(ActionEvent actionEvent) {
-         // newSongModel.createSong(txtfTitle.getText(), txtfArtist.getText(), cbCategory.getValue().toString(), txtfTime.getText(), txtfFilePath.getText());
         String title = txtfTitle.getText();
         String artist = txtfArtist.getText();
         String category = (String) cbCategory.getValue();  // Skal lige testes, er cast til at være en String og ikke object.
@@ -42,6 +42,8 @@ public class NewSongController {
     }
 
     public void onCancelSong(ActionEvent actionEvent) {
+        Stage stage = (Stage) txtfTitle.getScene().getWindow();
+        stage.close();
     }
 
 }

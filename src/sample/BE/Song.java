@@ -6,16 +6,15 @@ public class Song {
     private String category;
     private String filePath;
     private int minute;
-    private int second;
+    private int seconds;
     private int id;
 
-    public Song(String title, String artist, String category, String filePath,int second, int id) {
+    public Song(String title, String artist, String category, String filePath,int seconds, int id) {
         setTitle(title);
         setArtist(artist);
         setCategory(category);
         setFilePath(filePath);
         setId(id);
-        // Duration duration = new Duration(second);
         // need to get time from the controller in seconds.
     }
 
@@ -25,7 +24,7 @@ public class Song {
                 + artist + ": "
                 + category + ": "
                 + filePath + ": "
-                + second + ": "
+                + seconds + ": "
                 + id + ": ";
     }
 
@@ -69,12 +68,12 @@ public class Song {
         this.minute = minute;
     }
 
-    public int getSecond() {
-        return second;
+    public int getSeconds() {
+        return seconds;
     }
 
-    public void setSecond(int second) {
-        this.second = second;
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
     }
 
     public int getId() {

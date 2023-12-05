@@ -25,11 +25,11 @@ public class SongDAO implements ISongDataAccess {
 
             while (rs.next())
             {
-                int id = rs.getInt("ID");
                 String title = rs.getString("title");
                 String artist = rs.getString("artist");
                 String category = rs.getString("category");
                 int time = rs.getInt("time"); // in seconds
+                int id = rs.getInt("ID");
 
                 Song song = new Song(title,artist,category,"", time, id);
                 allSongs.add(song);
@@ -42,10 +42,28 @@ public class SongDAO implements ISongDataAccess {
         }
     }
 
-    /*@Override
+    @Override
     public Song readSong(Song song) throws Exception {
-        return null;
-    }*/
+        String sql = "SELECT * FROM dbo.Songs WHERE ID = song.getId();";
+
+        try (Connection conn = databaseConnector.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                song.setTitle(rs.getString("title"));
+                song.setArtist(rs.getString("artist"));
+                song.setCategory(rs.getString("category"));
+                song.setSeconds(rs.getInt("time"));
+                song.setId(rs.getInt("ID"));
+            }
+            return song;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Could not get song from database", e);
+        }
+    }
 
     @Override
     public Song createSong(Song song) throws Exception {
@@ -58,7 +76,7 @@ public class SongDAO implements ISongDataAccess {
             stmt.setString(1,song.getTitle());
             stmt.setString(2,song.getArtist());
             stmt.setString(3,song.getCategory());
-            stmt.setInt(4,song.getSecond());
+            stmt.setInt(4,song.getSeconds());
 
             stmt.executeUpdate();
 
@@ -67,14 +85,14 @@ public class SongDAO implements ISongDataAccess {
 
             if(rs.next()){ id = rs.getInt(1);}
 
-            Song createdSong = new Song(song.getTitle(), song.getArtist(), song.getCategory(),song.getFilePath(), song.getSecond(), id);
+            Song createdSong = new Song(song.getTitle(), song.getArtist(), song.getCategory(),song.getFilePath(), song.getSeconds(), id);
 
             return createdSong;
         }
         catch (SQLException ex)
         {
             ex.printStackTrace();
-            throw new Exception("Couldn't create song");
+            throw new Exception("Couldn't create song", ex);
         }
 
 
@@ -95,7 +113,7 @@ public class SongDAO implements ISongDataAccess {
             stmt.setString(1,song.getTitle());
             stmt.setString(2,song.getArtist());
             stmt.setString(3,song.getCategory());
-            stmt.setInt(4,song.getSecond());
+            stmt.setInt(4,song.getSeconds());
             stmt.setInt(5,song.getId());
 
             stmt.executeUpdate();

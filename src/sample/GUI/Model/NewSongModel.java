@@ -32,7 +32,7 @@ public class NewSongModel {
         s.setArtist(updatedSong.getArtist());
         s.setCategory(updatedSong.getCategory());
         s.setFilePath(updatedSong.getFilePath());
-        s.setSecond(updatedSong.getSecond());
+        s.setSeconds(updatedSong.getSeconds());
 
     }
 
