@@ -1,5 +1,6 @@
 package sample.GUI.Controller;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +17,8 @@ import sample.GUI.Model.MainModel;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController {
@@ -54,7 +57,6 @@ public class MainController {
 
     private final MainModel mainModel;
 
-
     public MainController() {
         try {
             mainModel = new MainModel();
@@ -63,10 +65,13 @@ public class MainController {
             throw new IllegalStateException("Failed to initialize MainModel", e);
         }
     }
+
     @FXML
     public void initialize() {
         setupTableView();
+        setupPlaylistSelectionListener();
     }
+
 
     private void setupTableView() {
         tvSongs.setItems(mainModel.getObservableSongs());
@@ -79,7 +84,30 @@ public class MainController {
         tvPlaylists.setItems(mainModel.getObservablePlaylists());
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colSongs.setCellValueFactory(new PropertyValueFactory<>("songCount"));
-        //colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("time"));
+        colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("formattedTotalTime"));
+    }
+
+    private void setupPlaylistSelectionListener() {
+        tvPlaylists.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                updateSongsInPlaylistView(newValue);
+            }
+        });
+    }
+
+    private void updateSongsInPlaylistView(Playlist selectedPlaylist) {
+        try {
+            List<SongsInPlaylist> songsInPlaylist = mainModel.getAllSongsInPlaylist(selectedPlaylist);
+            List<String> songDetails = new ArrayList<>();
+            for (int i = 0; i < songsInPlaylist.size(); i++) {
+                SongsInPlaylist song = songsInPlaylist.get(i);
+                String detail = (i + 1) + ": " + song.getTitle() + " - " + song.getArtist();
+                songDetails.add(detail);
+            }
+            lvSongsInPlaylist.setItems(FXCollections.observableArrayList(songDetails));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void displayError(Throwable t) {
@@ -114,7 +142,7 @@ public class MainController {
         Stage stage = new Stage();
         stage.setTitle("Create New Playlist");
         stage.setScene(new Scene(root));
-        stage.show();
+        stage.showAndWait();
     }
 
     public void onEditPlaylist(ActionEvent actionEvent) throws IOException {
@@ -124,6 +152,8 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewPlaylist.fxml"));
             Parent root = loader.load();
             NewPlaylistController controller = loader.getController();
+            controller.setMainModel(mainModel);
+            controller.setEditingPlaylist(selectedPlaylist);
 
             Stage stage = new Stage();
             stage.setTitle("Edit playlist");
@@ -136,10 +166,13 @@ public class MainController {
         // Get the selected playlist from the tableview
         Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
         if (selectedPlaylist != null) {
-            // Delete the selected playlist from the database and update the UI
-            mainModel.deletePlaylist(selectedPlaylist);
-        }
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the playlist: " + selectedPlaylist.getName() + "?", ButtonType.YES, ButtonType.NO);
+            confirmAlert.showAndWait();
 
+            if (confirmAlert.getResult() == ButtonType.YES) {
+                mainModel.deletePlaylist(selectedPlaylist);
+            }
+        }
     }
 
     public void onMoveSongUp(ActionEvent actionEvent) {
@@ -183,21 +216,29 @@ public class MainController {
     }
 
     public void onClose(ActionEvent actionEvent) {
-
-    }
-
-    public void onMoveSong(ActionEvent actionEvent) {
-        // Get the selected song from the tvSongs tableview
         Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
-
-        // Get the selected playlist from the tvPlaylists tableview
         Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
 
         if (selectedSong != null && selectedPlaylist != null) {
-            int playlistID = selectedPlaylist.getId();
-            int songID = selectedSong.getId();
-            // Add the selected song to the selected playlist
-            mainModel.addSongToPlaylist(playlistID, songID);
+            try {
+                mainModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+                updateSongsInPlaylistView(selectedPlaylist); // Refresh the songs list view
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select both a song and a playlist.");
+            alert.showAndWait();
+        }
+    }
+
+    public void onAddSongToPlaylist(ActionEvent actionEvent) {
+        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null && selectedPlaylist != null) {
+            mainModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
+            updateSongsInPlaylistView(selectedPlaylist);
         }
     }
 

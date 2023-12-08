@@ -43,19 +43,23 @@ public class MainModel {
         return playlistManager.getSong(playlist, song);
     }*/
 
-    public Playlist createPlaylist(String name) {
+    public Playlist createPlaylist(String name) throws Exception {
+        return playlistManager.createPlaylist(name);
+    }
+
+    public void editPlaylist(Playlist selectedPlaylist){
         try {
-            return playlistManager.createPlaylist(name);
+            playlistManager.editPlaylist(selectedPlaylist);
+            availablePlaylists.set(availablePlaylists.indexOf(selectedPlaylist), selectedPlaylist);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
 
     public void deletePlaylist(Playlist playlist) {
         try {
             playlistManager.deletePlaylist(playlist);
-            // Remove the playlist from the observable list
             availablePlaylists.remove(playlist);
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +69,6 @@ public class MainModel {
     public void addSongToPlaylist(int playlistID, int songID) {
         try {
             playlistManager.addSongToPlaylist(playlistID, songID);
-            // You may need to update the UI or perform other actions here.
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +77,6 @@ public class MainModel {
     public void removeSongFromPlaylist(int playlistID, int songID) {
         try {
             playlistManager.removeSongFromPlaylist(playlistID, songID);
-            // You may need to update the UI or perform other actions here.
         } catch (Exception e) {
                 e.printStackTrace();
         }

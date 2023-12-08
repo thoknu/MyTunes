@@ -16,12 +16,46 @@ public class PlaylistDAO implements IPlaylistDataAccess {
         databaseConnector = new DatabaseConnector();
     }
 
+
+    @Override
+    public Playlist createPlaylist(String name) throws SQLException {
+        int id = 0; // This will be replaced with the generated ID from the database
+        int songCount = 0; // A new playlist has no songs
+        int totalTimeInSeconds = 0; // Total time is also 0 for a new playlist
+
+        try (Connection connection = databaseConnector.getConnection()) {
+            String sql = "INSERT INTO Playlists (Name) VALUES (?)";
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, name);
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating playlist failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    id = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating playlist failed, no ID obtained.");
+                }
+            }
+        }
+
+        return new Playlist(id, name, songCount, totalTimeInSeconds);
+    }
+
     @Override
     public List<Playlist> readAllPlaylists() {
         List<Playlist> allPlaylists = new ArrayList<>();
 
         try (Connection connection = databaseConnector.getConnection()) {
-            String sql = "SELECT PlaylistID, Name, (SELECT COUNT(*) FROM PlaylistSongs WHERE PlaylistID = p.PlaylistID) AS SongCount FROM Playlists p";
+            String sql =
+                    "SELECT p.PlaylistID, p.Name, COUNT(ps.SongID) AS SongCount, SUM(s.Time) AS TotalTime " +
+                    "FROM Playlists p " +
+                    "LEFT JOIN PlaylistSongs ps ON p.PlaylistID = ps.PlaylistID " +
+                    "LEFT JOIN Songs s ON ps.SongID = s.ID " +
+                    "GROUP BY p.PlaylistID, p.Name";
             //
             try (Statement statement = connection.createStatement();
                  ResultSet resultSet = statement.executeQuery(sql)) {
@@ -29,7 +63,8 @@ public class PlaylistDAO implements IPlaylistDataAccess {
                     int id = resultSet.getInt("PlaylistID");
                     String name = resultSet.getString("Name");
                     int songCount = resultSet.getInt("SongCount");
-                    Playlist playlist = new Playlist(id, name, songCount);
+                    int totalTimeInSeconds = resultSet.getInt("TotalTime");
+                    Playlist playlist = new Playlist(id, name, songCount, totalTimeInSeconds);
                     allPlaylists.add(playlist);
                 }
             }
@@ -40,40 +75,14 @@ public class PlaylistDAO implements IPlaylistDataAccess {
     }
 
     @Override
-    public Playlist createPlaylist(String name) throws SQLException {
-        /*try (Connection connection = databaseConnector.getConnection()) {
-            String sql = "INSERT INTO Playlists (Name) VALUES (?)";
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, name);
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Creating playlist failed, no rows affected.");
-            }
-
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                if (keys.next()) {
-                    int id = keys.getInt(1);
-                    return new Playlist(id, name, );
-                } else {
-                    throw new SQLException("Creating playlist failed, no ID obtained.");
-                }
-            }
-        }*/
-        return null;
-    }
-
-
-    @Override
     public void updatePlaylist(Playlist selectedPlaylist) throws Exception {
         try (Connection connection = databaseConnector.getConnection()) {
             String sql = "UPDATE Playlists SET Name = ? WHERE PlaylistID = ?";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setString(1, selectedPlaylist.getName());
-            pstmt.setInt(2, selectedPlaylist.getId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, selectedPlaylist.getName());
+                pstmt.setInt(2, selectedPlaylist.getId());
+                pstmt.executeUpdate();
+            }
         }
     }
 
@@ -85,7 +94,7 @@ public class PlaylistDAO implements IPlaylistDataAccess {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -96,8 +105,11 @@ public class PlaylistDAO implements IPlaylistDataAccess {
         }
 
         List<SongsInPlaylist> allSongsInPlaylist = new ArrayList<>();
-        String sql = "SELECT SongsInPlaylist.SongID, Songs.Title, Songs.Time FROM SongsInPlaylist " +
-                "INNER JOIN Songs ON SongsInPlaylist.SongID = Songs.SongID WHERE PlaylistID = ?";
+        String sql =
+                "SELECT PlaylistSongs.SongID, Songs.Title, Songs.Time, Songs.artist " +
+                "FROM PlaylistSongs " +
+                "INNER JOIN Songs ON PlaylistSongs.SongID = Songs.ID " +
+                "WHERE PlaylistID = ?";
         try (Connection connection = databaseConnector.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -106,19 +118,18 @@ public class PlaylistDAO implements IPlaylistDataAccess {
                 while (resultSet.next()) {
                     int songID = resultSet.getInt("SongID");
                     String title = resultSet.getString("Title");
-                    String source = resultSet.getString("Source");
-                    SongsInPlaylist songsInPlaylist = new SongsInPlaylist(playlist.getId(), songID, title, source);
+                    String artist = resultSet.getString("Artist");
+                    System.out.println("Artist: " + artist);
+                    SongsInPlaylist songsInPlaylist = new SongsInPlaylist(playlist.getId(), songID, title, artist);
                     allSongsInPlaylist.add(songsInPlaylist);
                 }
             }
         } catch (SQLException e) {
-            throw new SQLException("Error reading songs from playlist: " + e.getMessage(), e);
+            e.printStackTrace();
         }
         return allSongsInPlaylist;
     }
-
-
-
+    
     @Override
     public void addSongToPlaylist(int playlistID, int songID) throws SQLException {
         try (Connection connection = databaseConnector.getConnection()) {

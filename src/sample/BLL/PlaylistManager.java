@@ -19,9 +19,6 @@ public class PlaylistManager {
     }
 
     public Playlist createPlaylist(String name) throws SQLException {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Playlist name cannot be null or empty.");
-        }
         return playlistDAO.createPlaylist(name);
     }
 

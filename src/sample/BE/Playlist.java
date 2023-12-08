@@ -8,11 +8,14 @@ public class Playlist {
     private SimpleIntegerProperty id = new SimpleIntegerProperty();
     private SimpleStringProperty name = new SimpleStringProperty();
     private SimpleIntegerProperty songCount = new SimpleIntegerProperty();
+    private SimpleIntegerProperty totalTimeInSeconds = new SimpleIntegerProperty();
+    private SimpleStringProperty formattedTotalTime = new SimpleStringProperty();
 
-    public Playlist(int id, String name, int songCount) {
+    public Playlist(int id, String name, int songCount, int totalTimeInSeconds) {
         setId(id);
         setName(name);
         this.songCount.set(songCount);
+        setTotalTime(totalTimeInSeconds);
     }
 
     public int getId() {
@@ -49,6 +52,38 @@ public class Playlist {
 
     public SimpleIntegerProperty songCountProperty() {
         return songCount;
+    }
+
+    public int getTotalTime() {
+        return totalTimeInSeconds.get();
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTimeInSeconds.set(totalTime);
+        setFormattedTotalTime(formatTime(totalTime));
+    }
+
+    public SimpleIntegerProperty totalTimeProperty() {
+        return totalTimeInSeconds;
+    }
+
+    public String getFormattedTotalTime() {
+        return formattedTotalTime.get();
+    }
+
+    public void setFormattedTotalTime(String formattedTime) {
+        this.formattedTotalTime.set(formattedTime);
+    }
+
+    public SimpleStringProperty formattedTotalTimeProperty() {
+        return formattedTotalTime;
+    }
+
+    private String formatTime(int totalSecs) {
+            int hours = totalSecs / 3600;
+            int minutes = (totalSecs % 3600) / 60;
+            int seconds = totalSecs % 60;
+            return String.format("%d:%d:%d", hours, minutes, seconds);
     }
 
     @Override

@@ -3,6 +3,7 @@ package sample.GUI.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import sample.BE.Playlist;
@@ -15,40 +16,45 @@ public class NewPlaylistController{
     @FXML
     private TextField txtfName;
     private MainModel mainModel;
+    private Playlist editingPlaylist;
 
-    public NewPlaylistController(MainModel mainModel) {
-        this.mainModel = mainModel;
-    }
-
-    public void onSavePlaylist(ActionEvent actionEvent) {
-        String name = txtfName.getText().trim();
-        if (!name.isEmpty()){
-            Playlist newPlaylist = mainModel.createPlaylist(name);
-            if (newPlaylist != null){
-                closeStage();
-            } else {
-                //handle playlist creation failue
-            }
-        } else {
-            //handle empty playlist name
-            displayError("Playlist name cannot be empty.");
+    public void setEditingPlaylist(Playlist editingPlaylist){
+        this.editingPlaylist = editingPlaylist;
+        if (editingPlaylist != null){
+            txtfName.setText(editingPlaylist.getName());
         }
     }
 
+    public void onSavePlaylist(ActionEvent actionEvent) {
+        String playlistName = txtfName.getText();
+        if (!playlistName.isEmpty()) {
+            if (editingPlaylist == null) {
+            try { // Creating a new playlist
+                    Playlist newPlaylist = mainModel.createPlaylist(playlistName);
+                    mainModel.getObservablePlaylists().add(newPlaylist);
+            } catch (Exception e) {
+                e.printStackTrace();}
+            } else { // Updating an existing playlist
+                    editingPlaylist.setName(playlistName);
+                    mainModel.editPlaylist(editingPlaylist);
+                }
+                Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                stage.close();
+        }
+
+    }
 
 
     public void onCancelPlaylist(ActionEvent actionEvent) {
-        closeStage();
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.close();
     }
+
 
     private void displayError(String s) {
         // Implementation of error message display
     }
 
-    private void closeStage() {
-        Stage stage = (Stage) txtfName.getScene().getWindow();
-        stage.close();
-    }
 
     public void setMainModel(MainModel mainModel) {
         this.mainModel = mainModel;

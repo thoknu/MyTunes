@@ -4,13 +4,21 @@ public class SongsInPlaylist {
     private final int songID;
     private final int playlistID;
     private String title;
-    private String source;
+    private String artist;
 
-    public SongsInPlaylist(int playlistID, int songID, String title, String source) {
+    public SongsInPlaylist(int playlistID, int songID, String title, String artist) {
         this.playlistID = playlistID;
         this.songID = songID;
         this.title = title;
-        this.source = source;
+        this.artist = artist;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
     public int getSongID() {
@@ -29,16 +37,8 @@ public class SongsInPlaylist {
         this.title = title;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     @Override
     public String toString() {
-        return String.format("SongsInPlaylist{songID=%d, playlistID=%d, title='%s', source='%s'}", songID, playlistID, title, source);
+        return String.format("SongsInPlaylist{songID=%d, playlistID=%d, title='%s', artist='%s'}", songID, playlistID, title, artist);
     }
 }

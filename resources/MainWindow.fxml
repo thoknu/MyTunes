@@ -34,7 +34,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <Button layoutX="737.0" layoutY="168.0" mnemonicParsing="false" onAction="#onMoveSong" prefHeight="25.0" prefWidth="56.0" text="&lt;">
+      <Button layoutX="737.0" layoutY="168.0" mnemonicParsing="false" onAction="#onAddSongToPlaylist" prefHeight="25.0" prefWidth="56.0" text="&lt;">
          <font>
             <Font name="Comic Sans MS" size="18.0" />
          </font>
