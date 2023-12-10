@@ -1,5 +1,6 @@
 package sample.GUI.Model;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import sample.BE.Song;
 import sample.BLL.SongManager;
@@ -10,11 +11,23 @@ import java.util.List;
 public class NewSongModel {
     private SongManager songManager;
 
-    private ObservableList<Song> songsToBeViewed;
+    private ObservableList<Song> songsToBeViewed = FXCollections.observableArrayList();
+
+
+    public NewSongModel(){
+        try {
+            songManager = new SongManager();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void createNewSong(Song newSong) throws Exception {
         Song song = songManager.createNewSong(newSong);
         songsToBeViewed.add(song);
+    }
+    public ObservableList<Song> getSongsToBeViewed() {
+        return songsToBeViewed;
     }
     public void searchSong (String query) throws Exception{
         List<Song> searchResults = songManager.searchSongs(query);
@@ -45,37 +58,34 @@ public class NewSongModel {
     }
 
 
-    public int calculateSecondsFromUserInput(String timeFromUser){
-        int calculatedSeconds = 0;
+    public int calculateSecondsFromUserInput(String timeFromUser) {
         String[] timeParts = timeFromUser.split("[\\s:,;.-]+");
-
-        if (timeParts.length < 2 || timeParts.length > 3) {
-            // Handle invalid input format
+        // checks is numerical
+        if (timeParts.length != 2 && timeParts.length != 3) {
             throw new IllegalArgumentException("Invalid time format: " + timeFromUser);
         }
+        // decides how many parts, so i can be split accordingly
+        int hours = (timeParts.length == 3) ? Integer.parseInt(timeParts[0]) : 0;
+        int minutes = Integer.parseInt(timeParts[timeParts.length - 2]);
+        int seconds = Integer.parseInt(timeParts[timeParts.length - 1]);
+        // checks the time isn't 61 minutes etc.
+        validateTimeValues(hours, minutes, seconds);
 
-        int hours = 0;
-        int minutes = 0;
-        int seconds = 0;
+        return hours * 3600 + minutes * 60 + seconds;
+    }
 
-        if (timeParts.length == 2) {
-            // Format: Minutes:Seconds
-            minutes = Integer.parseInt(timeParts[0]);
-            seconds = Integer.parseInt(timeParts[1]);
-        } else {
-            // Format: Hours:Minutes:Seconds
-            hours = Integer.parseInt(timeParts[0]);
-            minutes = Integer.parseInt(timeParts[1]);
-            seconds = Integer.parseInt(timeParts[2]);
-        }
+    private boolean isValidTimeFormat(String[] timeParts) {
+        return (timeParts.length == 2 && isNumeric(timeParts[0]) && isNumeric(timeParts[1])) ||
+                (timeParts.length == 3 && isNumeric(timeParts[0]) && isNumeric(timeParts[1]) && isNumeric(timeParts[2]));
+    }
 
-        // Validating the values, so you cant have 61 seconds etc.
+    private void validateTimeValues(int hours, int minutes, int seconds) {
         if (minutes < 0 || seconds < 0 || seconds >= 60 || minutes >= 60 || hours < 0) {
-            // Handle invalid values, throw an exception, or provide default values
-            throw new IllegalArgumentException("Invalid time values: " + timeFromUser);
+            throw new IllegalArgumentException("Invalid time values.");
         }
+    }
 
-        // total time conversion in seconds.
-        return calculatedSeconds = hours * 3600 + minutes * 60 + seconds;
+    private boolean isNumeric(String str) {
+        return str.matches("\\d+");  // This Regex, checks for 0-9
     }
 }

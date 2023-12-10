@@ -3,7 +3,6 @@ package sample.DAL;
 
 import sample.BE.Song;
 
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +30,10 @@ public class SongDAO implements ISongDataAccess {
                 String category = rs.getString("category");
                 int time = rs.getInt("time"); // in seconds
                 int id = rs.getInt("ID");
+                String filepath = rs.getString("filename");
 
-                Song song = new Song(title,artist,category,"", time, id);
+                Song song = new Song(title,artist,category,filepath, time, id);
+
                 allSongs.add(song);
             }
             return allSongs;
@@ -64,18 +65,6 @@ public class SongDAO implements ISongDataAccess {
             e.printStackTrace();
             throw new Exception("Could not get song from database", e);
         }
-    }
-
-    public ArrayList<File> readLocalSongs() {
-        ArrayList<File> songs = new ArrayList<File>();
-        File directory = new File("songs");
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                songs.add(file);
-            }
-        }
-        return songs;
     }
 
     @Override
@@ -117,7 +106,7 @@ public class SongDAO implements ISongDataAccess {
     @Override
     public void updateSong(Song song) throws Exception {
     // SQL command
-        String sql = "UPDATE dbo.Songs SET Title = ?, Artist = ?, Category = ?, Time = ?, WHERE ID = ?";
+        String sql = "UPDATE dbo.Songs SET Title = ?, Artist = ?, Category = ?, Time = ?, Filename = ? WHERE ID = ?";
 
         try (Connection conn = databaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql))
@@ -127,7 +116,9 @@ public class SongDAO implements ISongDataAccess {
             stmt.setString(2,song.getArtist());
             stmt.setString(3,song.getCategory());
             stmt.setInt(4,song.getSeconds());
-            stmt.setInt(5,song.getId());
+            stmt.setString(5,song.getFilePath());
+            stmt.setInt(6,song.getId());
+
 
             stmt.executeUpdate();
 

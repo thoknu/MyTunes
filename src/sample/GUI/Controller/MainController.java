@@ -1,7 +1,6 @@
 package sample.GUI.Controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import sample.BE.Playlist;
 import sample.BE.Song;
@@ -27,8 +25,6 @@ import java.util.ResourceBundle;
 public class MainController {
 
     @FXML
-    private Label lblCurrentSong;
-    @FXML
     private Button lblPlayButton;
     @FXML
     private Label lblVolume;
@@ -36,8 +32,10 @@ public class MainController {
     private Slider sliderVolumeSlider;
     @FXML
     private TextField txtfFilterSearch;
+
     @FXML
     private ListView lvSongsInPlaylist;
+
     @FXML
     private TableView<Playlist> tvPlaylists;
     @FXML
@@ -46,6 +44,7 @@ public class MainController {
     private TableColumn<Playlist,String> colSongs;
     @FXML
     private TableColumn<Playlist,Integer> colPlaylistTime;
+
     @FXML
     private TableView<Song> tvSongs;
     @FXML
@@ -56,8 +55,8 @@ public class MainController {
     private TableColumn<Song,String> colCategory;
     @FXML
     private TableColumn<Song,Integer> colTime;
+
     private final MainModel mainModel;
-    private MediaPlayer mediaPlayer;
 
     public MainController() {
         try {
@@ -69,33 +68,9 @@ public class MainController {
     }
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize() {
         setupTableView();
         setupPlaylistSelectionListener();
-
-        mainModel.initializeSongs();
-        mediaPlayer = mainModel.getMediaPlayer();
-
-        sliderVolumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                mediaPlayer.setVolume(sliderVolumeSlider.getValue() * 0.01);
-                if (sliderVolumeSlider.valueProperty().getValue() == 0) {
-                    lblVolume.setText("\uD83D\uDD07");
-                }
-                else if (sliderVolumeSlider.valueProperty().getValue() < 25) {
-                    lblVolume.setText("\uD83D\uDD08");
-                }
-                else if (sliderVolumeSlider.valueProperty().getValue() > 75) {
-                    lblVolume.setText("\uD83D\uDD0A");
-                }
-                else {
-                    lblVolume.setText("\uD83D\uDD09");
-                }
-            }
-        });
-
     }
 
 
@@ -104,7 +79,7 @@ public class MainController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colArtist.setCellValueFactory(new PropertyValueFactory<>("artist"));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-        //colTime.setCellValueFactory(new PropertyValueFactory<>("time"));
+        colTime.setCellValueFactory(new PropertyValueFactory<>("formattedTime"));
 
 
         tvPlaylists.setItems(mainModel.getObservablePlaylists());
@@ -143,20 +118,15 @@ public class MainController {
         alert.showAndWait();
     }
     public void onPreviousSong(ActionEvent actionEvent) {
-        mainModel.previousSong();
-        lblCurrentSong.setText(mainModel.previousSong());
+
     }
 
-    public void onPlaySong(ActionEvent actionEvent) throws IOException {
-        mainModel.playSong();
-        mediaPlayer = mainModel.getMediaPlayer();
-        mediaPlayer.setVolume(sliderVolumeSlider.getValue() * 0.01);
-        lblCurrentSong.setText(mainModel.playSong());
+    public void onPlaySong(ActionEvent actionEvent) {
+
     }
 
     public void onNextSong(ActionEvent actionEvent) {
-        mainModel.nextSong();
-        lblCurrentSong.setText(mainModel.nextSong());
+
     }
 
     public void onFilterSearch(ActionEvent actionEvent) {
@@ -227,7 +197,26 @@ public class MainController {
         stage.show();
     }
 
-    public void onEditSong(ActionEvent actionEvent) {
+    public void onEditSong(ActionEvent actionEvent) throws IOException {
+        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
+            Parent root = loader.load();
+
+            NewSongController controller = loader.getController();
+            controller.setMainModel(mainModel);
+            controller.setUpdatedSong(selectedSong);
+
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Song");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Please select a song to edit");
+            alert.showAndWait();
+        }
 
     }
 
@@ -272,6 +261,5 @@ public class MainController {
             updateSongsInPlaylistView(selectedPlaylist);
         }
     }
-
 
 }

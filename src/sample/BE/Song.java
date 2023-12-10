@@ -1,5 +1,8 @@
 package sample.BE;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Song {
     private String title;
     private String artist;
@@ -8,6 +11,7 @@ public class Song {
     private int minute;
     private int seconds;
     private int id;
+    private StringProperty formattedTime;
 
     public Song(String title, String artist, String category, String filePath,int seconds, int id) {
         setTitle(title);
@@ -15,7 +19,10 @@ public class Song {
         setCategory(category);
         setFilePath(filePath);
         setId(id);
-        // need to get time from the controller in seconds.
+
+
+        this.formattedTime = new SimpleStringProperty(formattedTime());
+        setSeconds(seconds);
     }
 
     @Override
@@ -26,6 +33,25 @@ public class Song {
                 + filePath + ": "
                 + seconds + ": "
                 + id + ": ";
+    }
+
+    public String formattedTime() {
+        int hours = getSeconds() / 3600;
+        int minutes = (getSeconds() % 3600) / 60;
+        int seconds = getSeconds() % 60;
+
+        if (hours > 0) {
+            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+    public StringProperty formattedTimeProperty() {
+        return formattedTime;
+    }
+
+    public String getFormattedTime() {
+        return formattedTime.get();
     }
 
     public String getTitle() {
@@ -74,6 +100,7 @@ public class Song {
 
     public void setSeconds(int seconds) {
         this.seconds = seconds;
+        this.formattedTime.set(formattedTime());
     }
 
     public int getId() {
