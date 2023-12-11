@@ -82,7 +82,24 @@ public class MainModel {
         }
     }
 
+    public void refreshSongs() {
+        try {
+            // Reload songs from the database
+            List<Song> allSongs = songManager.readAllSongs();
 
+            availableSongs.setAll(allSongs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSong(Song selectedSong)throws Exception {
+        // Deletes song in DAL
+        songManager.deleteSong(selectedSong);
+        // removes it from observable list and UI.
+        availableSongs.remove(selectedSong);
+
+    }
 
 
 

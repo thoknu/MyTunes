@@ -35,27 +35,23 @@ public class NewSongModel {
         songsToBeViewed.addAll(searchResults);
     }
 
-    public void updateSong(Song updatedSong) throws Exception{
+    public void updateSong(Song updatedSong) throws Exception {
         songManager.updateSong(updatedSong);
-        // update song in DAL, through all the layers.
-        Song s = songsToBeViewed.get(songsToBeViewed.indexOf(updatedSong));
 
-        // Update observable list and UI
-        s.setTitle(updatedSong.getTitle());
-        s.setArtist(updatedSong.getArtist());
-        s.setCategory(updatedSong.getCategory());
-        s.setFilePath(updatedSong.getFilePath());
-        s.setSeconds(updatedSong.getSeconds());
+        int index = songsToBeViewed.indexOf(updatedSong);
 
+        if (index >= 0 && index < songsToBeViewed.size()) {
+            Song s = songsToBeViewed.get(index);
+
+            // Update observable list and UI
+            s.setTitle(updatedSong.getTitle());
+            s.setArtist(updatedSong.getArtist());
+            s.setCategory(updatedSong.getCategory());
+            s.setFilePath(updatedSong.getFilePath());
+            s.setSeconds(updatedSong.getSeconds());
+        }
     }
 
-    public void deleteSong(Song selectedSong)throws Exception {
-        // Deletes song in DAL
-        songManager.deleteSong(selectedSong);
-        // removes it from observable list and UI.
-        songsToBeViewed.remove(selectedSong);
-
-    }
 
 
     public int calculateSecondsFromUserInput(String timeFromUser) {
@@ -88,4 +84,5 @@ public class NewSongModel {
     private boolean isNumeric(String str) {
         return str.matches("\\d+");  // This Regex, checks for 0-9
     }
+
 }

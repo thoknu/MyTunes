@@ -46,7 +46,7 @@ public class MainController {
     private TableColumn<Playlist,Integer> colPlaylistTime;
 
     @FXML
-    private TableView<Song> tvSongs;
+    public TableView<Song> tvSongs;
     @FXML
     private TableColumn<Song,String> colTitle;
     @FXML
@@ -221,17 +221,24 @@ public class MainController {
     }
 
     public void onDeleteSong(ActionEvent actionEvent) {
-        // Get the selected song from the lvSongsInPlaylist listview
-        SongsInPlaylist selectedSong = (SongsInPlaylist) lvSongsInPlaylist.getSelectionModel().getSelectedItem();
 
-        // Get the selected playlist from the tvPlaylists tableview
-        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+        //////////////////////////////////////////////////////
+        ///// NEED TO HANDLE IF THE SONG IS IN A PLAYLIST/////
+        //////////////////////////////////////////////////////
+        // something like, you need to remove this from all playlists before deleting.
+        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
 
-        if (selectedSong != null && selectedPlaylist != null) {
-            int playlistID = selectedPlaylist.getId();
-            int songID = selectedSong.getSongID();
-            // Remove the selected song from the selected playlist
-            mainModel.removeSongFromPlaylist(playlistID, songID);
+        if (selectedSong != null) {
+            try {
+                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?", ButtonType.YES, ButtonType.NO);
+                confirmAlert.showAndWait();
+                if (confirmAlert.getResult() == ButtonType.YES){
+                    mainModel.deleteSong(selectedSong);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 

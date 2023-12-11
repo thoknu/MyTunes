@@ -24,7 +24,7 @@ public class NewSongController {
     private TextField txtfFilePath;
     private NewSongModel newSongModel;
     private MainModel mainModel;
-    private Song updatedSong;
+    private Song selecetedSong;
 
     @FXML
     public void initialize(){
@@ -37,6 +37,7 @@ public class NewSongController {
     }
 
     public void onSaveSong(ActionEvent actionEvent) {
+
         String title = txtfTitle.getText();
         String artist = txtfArtist.getText();
         String category = (String) cbCategory.getValue();
@@ -45,7 +46,7 @@ public class NewSongController {
 
         int duration = newSongModel.calculateSecondsFromUserInput(time);
 
-        if (updatedSong == null) {
+        if (selecetedSong == null) {
             // Creating a new song
             Song newSong = new Song(title, artist, category, filePath, duration, -1);
 
@@ -57,14 +58,16 @@ public class NewSongController {
             }
         } else {
             // Editing an existing song
-            updatedSong.setTitle(title);
-            updatedSong.setArtist(artist);
-            updatedSong.setCategory(category);
-            updatedSong.setFilePath(filePath);
-            updatedSong.setSeconds(duration);
+            selecetedSong.setTitle(title);
+            selecetedSong.setArtist(artist);
+            selecetedSong.setCategory(category);
+            selecetedSong.setFilePath(filePath);
+            selecetedSong.setSeconds(duration);
 
             try {
-                newSongModel.updateSong(updatedSong);
+                newSongModel.updateSong(selecetedSong);
+
+
                 showConfirmation("Song Updated", "The song has been successfully updated.");
             } catch (Exception e) {
                 displayError("Error", "An error occurred while updating the song.", e);
@@ -93,7 +96,9 @@ public class NewSongController {
 
         // Set the action for the OK button
         alert.setOnHidden(event -> {
-            if (alert.getResult() == okButton){}
+            if (alert.getResult() == okButton){
+                mainModel.refreshSongs();
+            }
         });
 
         alert.showAndWait();
@@ -121,7 +126,7 @@ public class NewSongController {
     }
 
     public void setUpdatedSong(Song updatedSong) {
-        this.updatedSong = updatedSong;
+        this.selecetedSong = updatedSong;
         if (updatedSong != null)
         {
             txtfTitle.setText(updatedSong.getTitle());

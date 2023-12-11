@@ -20,7 +20,7 @@ public class Song {
         setFilePath(filePath);
         setId(id);
 
-
+        // Converts the time to a readable format ei. 2:21
         this.formattedTime = new SimpleStringProperty(formattedTime());
         setSeconds(seconds);
     }
