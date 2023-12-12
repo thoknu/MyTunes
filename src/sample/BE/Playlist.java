@@ -14,7 +14,7 @@ public class Playlist {
     public Playlist(int id, String name, int songCount, int totalTimeInSeconds) {
         setId(id);
         setName(name);
-        this.songCount.set(songCount);
+        setSongCount(songCount);
         setTotalTime(totalTimeInSeconds);
     }
 

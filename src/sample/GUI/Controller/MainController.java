@@ -18,9 +18,8 @@ import sample.GUI.Model.MainModel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.util.*;
 
 public class MainController {
 
@@ -55,7 +54,7 @@ public class MainController {
     private TableColumn<Song,String> colCategory;
     @FXML
     private TableColumn<Song,Integer> colTime;
-
+    private Map<String, SongsInPlaylist> songsInPlaylistMap = new HashMap<>();
     private final MainModel mainModel;
 
     public MainController() {
@@ -100,10 +99,12 @@ public class MainController {
         try {
             List<SongsInPlaylist> songsInPlaylist = mainModel.getAllSongsInPlaylist(selectedPlaylist);
             List<String> songDetails = new ArrayList<>();
-            for (int i = 0; i < songsInPlaylist.size(); i++) {
-                SongsInPlaylist song = songsInPlaylist.get(i);
-                String detail = (i + 1) + ": " + song.getTitle() + " - " + song.getArtist();
+            songsInPlaylistMap.clear();
+
+            for (SongsInPlaylist song : songsInPlaylist) {
+                String detail = song.getTitle() + " - " + song.getArtist();
                 songDetails.add(detail);
+                songsInPlaylistMap.put(detail, song);
             }
             lvSongsInPlaylist.setItems(FXCollections.observableArrayList(songDetails));
         } catch (Exception e) {
@@ -184,10 +185,6 @@ public class MainController {
 
     }
 
-    public void onRemoveSongFromPlaylist(ActionEvent actionEvent) {
-
-    }
-
     public void onNewSong(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
         Parent root = loader.load();
@@ -243,20 +240,7 @@ public class MainController {
     }
 
     public void onClose(ActionEvent actionEvent) {
-        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
-        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
 
-        if (selectedSong != null && selectedPlaylist != null) {
-            try {
-                mainModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
-                updateSongsInPlaylistView(selectedPlaylist); // Refresh the songs list view
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select both a song and a playlist.");
-            alert.showAndWait();
-        }
     }
 
     public void onAddSongToPlaylist(ActionEvent actionEvent) {
@@ -266,7 +250,26 @@ public class MainController {
         if (selectedSong != null && selectedPlaylist != null) {
             mainModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
             updateSongsInPlaylistView(selectedPlaylist);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select both a song to add and a playlist to add it to.");
+            alert.showAndWait();
         }
     }
+
+    public void onRemoveSongFromPlaylist(ActionEvent actionEvent) throws SQLException {
+        String selectedSongDetail = (String) lvSongsInPlaylist.getSelectionModel().getSelectedItem();
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+
+        if (selectedPlaylist != null && selectedSongDetail != null && songsInPlaylistMap.containsKey(selectedSongDetail)) {
+            SongsInPlaylist selectedSong = songsInPlaylistMap.get(selectedSongDetail);
+            mainModel.removeSongFromPlaylist(selectedSong.getEntryID());
+            updateSongsInPlaylistView(selectedPlaylist);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select a song in the playlist to delete.");
+            alert.showAndWait();
+        }
+    }
+
+
 
 }

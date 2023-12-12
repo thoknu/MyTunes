@@ -106,7 +106,7 @@ public class PlaylistDAO implements IPlaylistDataAccess {
 
         List<SongsInPlaylist> allSongsInPlaylist = new ArrayList<>();
         String sql =
-                "SELECT PlaylistSongs.SongID, Songs.Title, Songs.Time, Songs.artist " +
+                " SELECT PlaylistSongs.EntryID, PlaylistSongs.SongID, Songs.Title, Songs.Time, Songs.Artist " +
                 "FROM PlaylistSongs " +
                 "INNER JOIN Songs ON PlaylistSongs.SongID = Songs.ID " +
                 "WHERE PlaylistID = ?";
@@ -116,11 +116,12 @@ public class PlaylistDAO implements IPlaylistDataAccess {
             pstmt.setInt(1, playlist.getId());
             try (ResultSet resultSet = pstmt.executeQuery()) {
                 while (resultSet.next()) {
+                    int entryID = resultSet.getInt("EntryID");
                     int songID = resultSet.getInt("SongID");
                     String title = resultSet.getString("Title");
                     String artist = resultSet.getString("Artist");
-                    System.out.println("Artist: " + artist);
-                    SongsInPlaylist songsInPlaylist = new SongsInPlaylist(playlist.getId(), songID, title, artist);
+
+                    SongsInPlaylist songsInPlaylist = new SongsInPlaylist(entryID, playlist.getId(), songID, title, artist);
                     allSongsInPlaylist.add(songsInPlaylist);
                 }
             }
@@ -132,9 +133,10 @@ public class PlaylistDAO implements IPlaylistDataAccess {
     
     @Override
     public void addSongToPlaylist(int playlistID, int songID) throws SQLException {
+        String sql = "INSERT INTO PlaylistSongs (PlaylistID, SongID) VALUES (?, ?)";
         try (Connection connection = databaseConnector.getConnection()) {
-            String sql = "INSERT INTO PlaylistSongs (PlaylistID, SongID) VALUES (?, ?)";
             PreparedStatement pstmt = connection.prepareStatement(sql);
+
             pstmt.setInt(1, playlistID);
             pstmt.setInt(2, songID);
             pstmt.executeUpdate();
@@ -142,12 +144,12 @@ public class PlaylistDAO implements IPlaylistDataAccess {
     }
 
     @Override
-    public void removeSongFromPlaylist(int playlistID, int songID) throws SQLException {
+    public void removeSongFromPlaylist(int entryID) throws SQLException {
+        String sql = "DELETE FROM PlaylistSongs WHERE EntryID = ?";
         try (Connection connection = databaseConnector.getConnection()) {
-            String sql = "DELETE FROM PlaylistSongs WHERE PlaylistID = ? AND SongID = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, playlistID);
-            pstmt.setInt(2, songID);
+
+            pstmt.setInt(1, entryID);
             pstmt.executeUpdate();
         }
     }

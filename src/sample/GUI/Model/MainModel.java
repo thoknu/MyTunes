@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import sample.BLL.SongManager;
 import sample.DAL.DatabaseConnector;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MainModel {
@@ -74,12 +75,8 @@ public class MainModel {
         }
     }
 
-    public void removeSongFromPlaylist(int playlistID, int songID) {
-        try {
-            playlistManager.removeSongFromPlaylist(playlistID, songID);
-        } catch (Exception e) {
-                e.printStackTrace();
-        }
+    public void removeSongFromPlaylist(int entryID) throws SQLException {
+        playlistManager.removeSongFromPlaylist(entryID);
     }
 
     public void refreshSongs() {
