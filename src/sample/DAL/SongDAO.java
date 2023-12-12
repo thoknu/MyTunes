@@ -3,6 +3,7 @@ package sample.DAL;
 
 import sample.BE.Song;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,31 @@ public class SongDAO implements ISongDataAccess {
             e.printStackTrace();
             throw new Exception("Could not get song from database", e);
         }
+    }
+
+    public ArrayList<File> readLocalSongs() {
+        ArrayList<File> songs = new ArrayList<File>();
+        File directory = new File("songs");
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                songs.add(file);
+            }
+        }
+        return songs;
+    }
+
+    public File readLocalSong(int index) {
+        File directory = new File("songs");
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                if (index == i) {
+                    return files[i];
+                }
+            }
+        }
+        return directory;
     }
 
     @Override

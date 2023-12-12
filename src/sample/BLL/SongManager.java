@@ -4,7 +4,9 @@ package sample.BLL;
         import sample.DAL.ISongDataAccess;
         import sample.DAL.SongDAO;
 
+        import java.io.File;
         import java.io.IOException;
+        import java.util.ArrayList;
         import java.util.List;
 
 public class SongManager {
@@ -34,6 +36,14 @@ public class SongManager {
         List<Song> allSongs = readAllSongs();
         List<Song> searchResult = songSearcher.search(allSongs,query);
         return searchResult;
+    }
+
+    public ArrayList<File> getSongs() throws IOException {
+        return songDAO.readLocalSongs();
+    }
+
+    public File getSong(int index) throws IOException {
+        return songDAO.readLocalSong(index);
     }
 
 }

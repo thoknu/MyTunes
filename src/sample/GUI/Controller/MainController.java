@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import sample.BE.Playlist;
 import sample.BE.Song;
@@ -23,6 +24,7 @@ import java.util.*;
 
 public class MainController {
 
+    public Label lblCurrentSong;
     @FXML
     private Button lblPlayButton;
     @FXML
@@ -56,6 +58,8 @@ public class MainController {
     private TableColumn<Song,Integer> colTime;
     private Map<String, SongsInPlaylist> songsInPlaylistMap = new HashMap<>();
     private final MainModel mainModel;
+    private MediaPlayer mediaPlayer;
+    private String isPlayingString = "... Is Playing";
 
     public MainController() {
         try {
@@ -118,16 +122,21 @@ public class MainController {
         alert.setHeaderText(t.getMessage());
         alert.showAndWait();
     }
-    public void onPreviousSong(ActionEvent actionEvent) {
-
+    public void onPreviousSong(ActionEvent actionEvent) throws IOException {
+        mainModel.previousSong(true);
+        lblCurrentSong.setText(mainModel.previousSong(false) + isPlayingString);
     }
 
-    public void onPlaySong(ActionEvent actionEvent) {
-
+    public void onPlaySong(ActionEvent actionEvent) throws IOException {
+        mainModel.tempValueForSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), true);
+        mediaPlayer = mainModel.getMediaPlayer();
+        mediaPlayer.setVolume(sliderVolumeSlider.getValue() * 0.01);
+        lblCurrentSong.setText(mainModel.playPauseSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), false) + isPlayingString);
     }
 
-    public void onNextSong(ActionEvent actionEvent) {
-
+    public void onNextSong(ActionEvent actionEvent) throws IOException {
+        mainModel.nextSong(true);
+        lblCurrentSong.setText(mainModel.nextSong(false) + isPlayingString);
     }
 
     public void onFilterSearch(ActionEvent actionEvent) {
