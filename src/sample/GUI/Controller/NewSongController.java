@@ -27,55 +27,94 @@ public class NewSongController {
     private Song selecetedSong;
 
     @FXML
-    public void initialize(){
+    public void initialize() throws Exception {
         newSongModel = new NewSongModel();
+        mainModel = new MainModel();
+
 
         cbCategory.getItems().clear();
-        cbCategory.getItems().addAll("Blues","Classical","Country","Electronic","Funk","Instrumental","Jazz","Latin","Metal","Pop","Punk","R&B","Rap","Reggae","Rock","Techno");
+        cbCategory.getItems().addAll("Blues","Classical","Country","Electronic","Funk","Instrumental","Jazz","Latin","Metal","Pop","Punk","R&B","Rap","Reggae","Rock","Techno","Miscellaneous");
         cbCategory.getSelectionModel().select("Pop");
 
     }
 
     public void onSaveSong(ActionEvent actionEvent) {
 
+        try {
+            if (selecetedSong == null) {
+                handleNewSong();
+            } else {
+                handleSongEdit();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Stage stage = (Stage) txtfTitle.getScene().getWindow();
+        stage.close();
+
+    }
+
+    private void handleNewSong() {
         String title = txtfTitle.getText();
         String artist = txtfArtist.getText();
         String category = (String) cbCategory.getValue();
         String time = txtfTime.getText();
         String filePath = txtfFilePath.getText();
 
-        int duration = newSongModel.calculateSecondsFromUserInput(time);
+        int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
 
-        if (selecetedSong == null) {
+        if (calculatedTime == -1) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid input for time, try format: 1:33:7");
+            alert.showAndWait();
+            return;
+        }
+
+        //if (selecetedSong == null) {
             // Creating a new song
-            Song newSong = new Song(title, artist, category, filePath, duration, -1);
+            Song newSong = new Song(title, artist, category, filePath, calculatedTime, -1);
 
             try {
                 newSongModel.createNewSong(newSong);
                 showConfirmation("Song Added", "A new song has been successfully added.");
+                mainModel.refreshSongs();
             } catch (Exception e) {
                 displayError("Error", "An error occurred while adding the song.", e);
             }
-        } else {
+
+        //}
+    }
+    private void handleSongEdit() {
+        if (selecetedSong != null) {
+            String title = txtfTitle.getText();
+            String artist = txtfArtist.getText();
+            String category = (String) cbCategory.getValue();
+            String time = txtfTime.getText();
+            String filePath = txtfFilePath.getText();
+
+            int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
+
+            if (calculatedTime == -1) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid input for time, try format: 1:33:7");
+                alert.showAndWait();
+                return;
+            }
+
             // Editing an existing song
             selecetedSong.setTitle(title);
             selecetedSong.setArtist(artist);
             selecetedSong.setCategory(category);
             selecetedSong.setFilePath(filePath);
-            selecetedSong.setSeconds(duration);
+            selecetedSong.setSeconds(calculatedTime);
 
             try {
                 newSongModel.updateSong(selecetedSong);
-
-
                 showConfirmation("Song Updated", "The song has been successfully updated.");
+                mainModel.refreshSongs();
             } catch (Exception e) {
                 displayError("Error", "An error occurred while updating the song.", e);
             }
         }
-
-        Stage stage = (Stage) txtfTitle.getScene().getWindow();
-        stage.close();
     }
 
     public void onCancelSong(ActionEvent actionEvent) {
@@ -97,7 +136,7 @@ public class NewSongController {
         // Set the action for the OK button
         alert.setOnHidden(event -> {
             if (alert.getResult() == okButton){
-                mainModel.refreshSongs();
+               // mainModel.refreshSongs();
             }
         });
 

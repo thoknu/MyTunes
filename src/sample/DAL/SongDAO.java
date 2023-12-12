@@ -123,10 +123,6 @@ public class SongDAO implements ISongDataAccess {
             throw new Exception("Couldn't create song", ex);
         }
 
-
-        // Calculate duration in seconds
-       // Duration songDuration = new Duration(song.getMinute(), song.getSecond());
-      //  int durationInSeconds = songDuration.getDurationInSecondsSong();
     }
 
     @Override

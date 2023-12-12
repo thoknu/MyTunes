@@ -236,13 +236,17 @@ public class MainController {
 
         if (selectedSong != null) {
             try {
-                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?", ButtonType.YES, ButtonType.NO);
+                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Are you sure you want to delete this song: " + selectedSong.getTitle() +
+                                "?\rPlease make sure this song is not a part of any playlist",
+                                    ButtonType.YES, ButtonType.NO);
                 confirmAlert.showAndWait();
                 if (confirmAlert.getResult() == ButtonType.YES){
                     mainModel.deleteSong(selectedSong);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Please delete " + selectedSong.getTitle() + " From all playlists before trying to delete again.");
+                alert.showAndWait();
             }
 
         }
