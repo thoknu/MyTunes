@@ -60,18 +60,29 @@ public class NewSongModel {
             }
             else
             {
+                int hours = 0;
+                int minutes = 0;
+                int seconds = 0;
+
                 // Valid ways to split the time from the user.
                 String[] timeParts = timeFromUser.split("[\\s:,;.-]+");
 
-                int hours = (timeParts.length == 3) ? Integer.parseInt(timeParts[0]) : 0;
-                int minutes = Integer.parseInt(timeParts[timeParts.length - 2]);
-                int seconds = Integer.parseInt(timeParts[timeParts.length - 1]);
-
-                if (!validateTimeValues(hours,minutes,seconds))
-                    throw new IllegalArgumentException("Invalid time format: " + timeFromUser);
-
-
-                //validateTimeValues(hours, minutes, seconds);
+                switch (timeParts.length) {
+                    case 3:
+                        hours = Integer.parseInt(timeParts[0]);
+                        minutes = Integer.parseInt(timeParts[1]);
+                        seconds = Integer.parseInt(timeParts[2]);
+                        break;
+                    case 2:
+                        minutes = Integer.parseInt(timeParts[0]);
+                        seconds = Integer.parseInt(timeParts[1]);
+                        break;
+                    case 1:
+                        seconds = Integer.parseInt(timeParts[0]);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid time format: " + timeFromUser);
+                }
 
                 return hours * 3600 + minutes * 60 + seconds;
             }
@@ -81,8 +92,7 @@ public class NewSongModel {
 
     }
 
-
-    public boolean userInputValidation(String timeFromUser)
+    private boolean userInputValidation(String timeFromUser)
     {
         if (timeFromUser == null || timeFromUser.trim().isEmpty()) {
             return false;
@@ -90,8 +100,8 @@ public class NewSongModel {
 
         String[] timeParts = timeFromUser.split("[\\s:,;.-]+");
 
-        if (timeParts.length != 2 && timeParts.length != 3) {
-                return false;
+        if (timeParts.length >= 4) {
+            return false;
         }
 
         for (String part : timeParts) {
@@ -101,14 +111,5 @@ public class NewSongModel {
         }
         return true;
     }
-
-    private boolean validateTimeValues(int hours, int minutes, int seconds) {
-        if (minutes < 0 || seconds < 0 || seconds >= 60 || minutes >= 60 || hours < 0) {
-            return false;
-        }
-        return true;
-    }
-
-
 
 }

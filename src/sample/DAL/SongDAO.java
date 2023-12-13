@@ -152,20 +152,23 @@ public class SongDAO implements ISongDataAccess {
         }
     }
 
-    @Override
     public void deleteSong(Song song) throws Exception {
+        String deleteFromPlaylistSQL = "DELETE FROM PlaylistSongs WHERE SongID = ?";
 
-        String sql = "DELETE FROM dbo.Songs WHERE ID = ?;";
+        try (Connection conn = databaseConnector.getConnection()) {
+            // First, delete the song from all playlists
+            try (PreparedStatement stmtDeleteFromPlaylists = conn.prepareStatement(deleteFromPlaylistSQL)) {
+                stmtDeleteFromPlaylists.setInt(1, song.getId());
+                stmtDeleteFromPlaylists.executeUpdate();
+            }
 
-        try (Connection conn = databaseConnector.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql))
-        {
-            stmt.setInt(1,song.getId());
-
-            stmt.executeUpdate();
-        }
-        catch (SQLException ex)
-        {
+            // Now, delete the song itself
+            String deleteSongSQL = "DELETE FROM Songs WHERE ID = ?";
+            try (PreparedStatement stmtDeleteSong = conn.prepareStatement(deleteSongSQL)) {
+                stmtDeleteSong.setInt(1, song.getId());
+                stmtDeleteSong.executeUpdate();
+            }
+        } catch (SQLException ex) {
             ex.printStackTrace();
             throw new Exception("Could not delete song", ex);
         }

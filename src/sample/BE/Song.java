@@ -25,16 +25,6 @@ public class Song {
         setSeconds(seconds);
     }
 
-    @Override
-    public String toString() {
-        return title +": "
-                + artist + ": "
-                + category + ": "
-                + filePath + ": "
-                + seconds + ": "
-                + id + ": ";
-    }
-
     public String formattedTime() {
         int hours = getSeconds() / 3600;
         int minutes = (getSeconds() % 3600) / 60;

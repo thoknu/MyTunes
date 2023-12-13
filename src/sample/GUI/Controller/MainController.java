@@ -220,28 +220,22 @@ public class MainController {
     }
 
     public void onDeleteSong(ActionEvent actionEvent) {
-
-        //////////////////////////////////////////////////////
-        ///// NEED TO HANDLE IF THE SONG IS IN A PLAYLIST/////
-        //////////////////////////////////////////////////////
-        // something like, you need to remove this from all playlists before deleting.
         Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
 
         if (selectedSong != null) {
             try {
                 Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION,
-                        "Are you sure you want to delete this song: " + selectedSong.getTitle() +
-                                "?\rPlease make sure this song is not a part of any playlist",
-                                    ButtonType.YES, ButtonType.NO);
+                        "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?",
+                        ButtonType.YES, ButtonType.NO);
                 confirmAlert.showAndWait();
                 if (confirmAlert.getResult() == ButtonType.YES){
                     mainModel.deleteSong(selectedSong);
                 }
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Please delete " + selectedSong.getTitle() + " From all playlists before trying to delete again.");
+            } catch (Exception e)
+            {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Something went wrong while trying to delete, please try again");
                 alert.showAndWait();
             }
-
         }
     }
 
@@ -279,7 +273,6 @@ public class MainController {
     public void onMoveSongUp(ActionEvent actionEvent) {
         int selectedSong = lvSongsInPlaylist.getSelectionModel().getSelectedIndex();
         Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
-
 
         if (selectedSong > 0){
             try {

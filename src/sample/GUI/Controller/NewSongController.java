@@ -65,13 +65,11 @@ public class NewSongController {
         int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
 
         if (calculatedTime == -1) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid input for time, try format: 1:33:7");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
             alert.showAndWait();
             return;
         }
 
-        //if (selecetedSong == null) {
-            // Creating a new song
             Song newSong = new Song(title, artist, category, filePath, calculatedTime, -1);
 
             try {
@@ -81,8 +79,10 @@ public class NewSongController {
             } catch (Exception e) {
                 displayError("Error", "An error occurred while adding the song.", e);
             }
+            finally {
+                mainModel.refreshSongs();
+            }
 
-        //}
     }
     private void handleSongEdit() {
         if (selecetedSong != null) {
@@ -95,7 +95,7 @@ public class NewSongController {
             int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
 
             if (calculatedTime == -1) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid input for time, try format: 1:33:7");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
                 alert.showAndWait();
                 return;
             }
