@@ -47,7 +47,21 @@ public class PlaylistManager {
         playlistDAO.addSongToPlaylist(playlistID, songID);
     }
 
-    public void removeSongFromPlaylist(int entryID) throws SQLException {
-        playlistDAO.removeSongFromPlaylist(entryID);
+    public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException {
+        playlistDAO.removeSongFromPlaylist(entryID, playlistID);
     }
+
+    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
+        if (currentOrder > 0){
+            playlistDAO.swapSongOrder(playlistID, currentOrder, currentOrder - 1);
+        }
+    }
+
+    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
+        int maxOrder = playlistDAO.getMaxOrderInPlaylist(playlistID);
+        if (currentOrder < maxOrder){
+            playlistDAO.swapSongOrder(playlistID, currentOrder, currentOrder + 1);
+        }
+    }
+
 }

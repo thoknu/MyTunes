@@ -85,8 +85,8 @@ public class MainModel {
         }
     }
 
-    public void removeSongFromPlaylist(int entryID) throws SQLException {
-        playlistManager.removeSongFromPlaylist(entryID);
+    public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException {
+        playlistManager.removeSongFromPlaylist(entryID, playlistID);
     }
 
     public void refreshSongs() {
@@ -204,6 +204,12 @@ public class MainModel {
         }
     }
 
+    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
+            playlistManager.moveSongUp(playlistID, currentOrder);
+    }
 
+    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
+        playlistManager.moveSongDown(playlistID, currentOrder);
+    }
 
 }

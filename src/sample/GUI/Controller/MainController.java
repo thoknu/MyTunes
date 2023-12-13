@@ -1,5 +1,6 @@
 package sample.GUI.Controller;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -186,14 +187,6 @@ public class MainController {
         }
     }
 
-    public void onMoveSongUp(ActionEvent actionEvent) {
-
-    }
-
-    public void onMoveSongDown(ActionEvent actionEvent) {
-
-    }
-
     public void onNewSong(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
         Parent root = loader.load();
@@ -253,7 +246,7 @@ public class MainController {
     }
 
     public void onClose(ActionEvent actionEvent) {
-
+        Platform.exit();
     }
 
     public void onAddSongToPlaylist(ActionEvent actionEvent) {
@@ -275,7 +268,7 @@ public class MainController {
 
         if (selectedPlaylist != null && selectedSongDetail != null && songsInPlaylistMap.containsKey(selectedSongDetail)) {
             SongsInPlaylist selectedSong = songsInPlaylistMap.get(selectedSongDetail);
-            mainModel.removeSongFromPlaylist(selectedSong.getEntryID());
+            mainModel.removeSongFromPlaylist(selectedSong.getEntryID(), selectedSong.getPlaylistID());
             updateSongsInPlaylistView(selectedPlaylist);
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select a song in the playlist to delete.");
@@ -283,6 +276,37 @@ public class MainController {
         }
     }
 
+    public void onMoveSongUp(ActionEvent actionEvent) {
+        int selectedSong = lvSongsInPlaylist.getSelectionModel().getSelectedIndex();
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+
+
+        if (selectedSong > 0){
+            try {
+                mainModel.moveSongUp(selectedPlaylist.getId(), selectedSong);
+                // Refresh the playlist view or adjust the GUI accordingly
+                updateSongsInPlaylistView(selectedPlaylist);
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void onMoveSongDown(ActionEvent actionEvent) {
+        int selectedSong = lvSongsInPlaylist.getSelectionModel().getSelectedIndex();
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+
+
+        if(selectedSong < lvSongsInPlaylist.getItems().size() - 1){
+            try {
+                mainModel.moveSongDown(selectedPlaylist.getId(), selectedSong);
+                // Refresh the playlist view or adjust the GUI accordingly
+                updateSongsInPlaylistView(selectedPlaylist);
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }

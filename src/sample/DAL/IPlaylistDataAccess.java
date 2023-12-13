@@ -23,6 +23,7 @@ public interface IPlaylistDataAccess {
 
     public void addSongToPlaylist(int playlistID, int songID) throws SQLException;
 
-    public void removeSongFromPlaylist(int entryID) throws SQLException;
+    public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException;
 
+    public void swapSongOrder(int playlistID, int order1, int order2) throws SQLException;
 }

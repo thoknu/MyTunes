@@ -44,20 +44,14 @@ public class NewPlaylistController{
 
     }
 
-
     public void onCancelPlaylist(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.close();
     }
 
-
-    private void displayError(String s) {
-        // Implementation of error message display
-    }
-
-
     public void setMainModel(MainModel mainModel) {
         this.mainModel = mainModel;
     }
+
 
 }
