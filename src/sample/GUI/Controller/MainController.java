@@ -250,6 +250,7 @@ public class MainController {
         if (selectedSong != null && selectedPlaylist != null) {
             mainModel.addSongToPlaylist(selectedPlaylist.getId(), selectedSong.getId());
             updateSongsInPlaylistView(selectedPlaylist);
+            tvPlaylists.refresh();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select both a song to add and a playlist to add it to.");
             alert.showAndWait();
@@ -264,6 +265,7 @@ public class MainController {
             SongsInPlaylist selectedSong = songsInPlaylistMap.get(selectedSongDetail);
             mainModel.removeSongFromPlaylist(selectedSong.getEntryID(), selectedSong.getPlaylistID());
             updateSongsInPlaylistView(selectedPlaylist);
+            tvPlaylists.refresh();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select a song in the playlist to delete.");
             alert.showAndWait();

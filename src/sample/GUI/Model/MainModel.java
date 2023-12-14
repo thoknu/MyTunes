@@ -80,13 +80,28 @@ public class MainModel {
     public void addSongToPlaylist(int playlistID, int songID) {
         try {
             playlistManager.addSongToPlaylist(playlistID, songID);
+            updatePlaylists();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException {
-        playlistManager.removeSongFromPlaylist(entryID, playlistID);
+        try {
+            playlistManager.removeSongFromPlaylist(entryID, playlistID);
+            updatePlaylists();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void updatePlaylists() {
+        try {
+            List<Playlist> updatedPlaylists = playlistManager.getAllPlaylists();
+            availablePlaylists.setAll(updatedPlaylists);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void refreshSongs() {
