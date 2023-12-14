@@ -47,7 +47,15 @@ public class MainModel {
 
     public List<SongsInPlaylist> getAllSongsInPlaylist(Playlist playlist) throws Exception {
         return playlistManager.getAllSongsInPlaylist(playlist);
+    }
 
+    public Playlist getPlaylistByID(int playlistID){
+        for (Playlist playlist : availablePlaylists){
+            if (playlist.getId() == playlistID){
+                return playlist;
+            }
+        }
+        return null;
     }
 
     /*public Song getSong(Playlist playlist, Song song) throws Exception {

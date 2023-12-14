@@ -117,6 +117,16 @@ public class MainController {
         }
     }
 
+    private void updateSongsInPlaylistViewUsingID(int playlistID) {
+        try {
+            // Fetch the playlist by ID or get it from an existing list
+            Playlist playlist = mainModel.getPlaylistByID(playlistID);
+            updateSongsInPlaylistView(playlist);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void displayError(Throwable t) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("-You are stupid-");
@@ -280,12 +290,11 @@ public class MainController {
 
     public void onRemoveSongFromPlaylist(ActionEvent actionEvent) throws SQLException {
         String selectedSongDetail = (String) lvSongsInPlaylist.getSelectionModel().getSelectedItem();
-        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
 
-        if (selectedPlaylist != null && selectedSongDetail != null && songsInPlaylistMap.containsKey(selectedSongDetail)) {
+        if (selectedSongDetail != null && songsInPlaylistMap.containsKey(selectedSongDetail)) {
             SongsInPlaylist selectedSong = songsInPlaylistMap.get(selectedSongDetail);
             mainModel.removeSongFromPlaylist(selectedSong.getEntryID(), selectedSong.getPlaylistID());
-            updateSongsInPlaylistView(selectedPlaylist);
+            updateSongsInPlaylistViewUsingID(selectedSong.getPlaylistID()); // Updated method
             tvPlaylists.refresh();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Select a song in the playlist to delete.");
