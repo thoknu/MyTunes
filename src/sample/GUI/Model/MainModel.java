@@ -135,6 +135,7 @@ public class MainModel {
 
     }
 
+    /// 0 Usages ///
     public void initializeSongs() throws IOException {
         // Initialize the first song into the list of songs so that it will always play the first song if nothing is selected
         song = songManager.getSong(0);

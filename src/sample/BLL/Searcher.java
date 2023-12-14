@@ -33,7 +33,4 @@ public class Searcher {
         return song.getTitle().toLowerCase().contains(query.toLowerCase());
     }
 
-    // Create a method to also search though which playlist has the searched song?
-    // Search method for searching playlist names maybe.
-
 }

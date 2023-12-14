@@ -221,6 +221,11 @@ public class MainController {
     public void onNewSong(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
         Parent root = loader.load();
+
+        NewSongController controller = loader.getController();
+        controller.setMainModel(mainModel);
+        controller.setMainController(this);
+
         Stage stage = new Stage();
         stage.setTitle("Import New Song");
         stage.setScene(new Scene(root));

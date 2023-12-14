@@ -31,11 +31,13 @@ public class NewSongController {
         newSongModel = new NewSongModel();
         mainModel = new MainModel();
 
-
+        // sets the dropdown menu for all categories.
         cbCategory.getItems().clear();
         cbCategory.getItems().addAll("Blues","Classical","Country","Electronic","Funk","Instrumental","Jazz","Latin","Metal","Pop","Punk","R&B","Rap","Reggae","Rock","Techno","Miscellaneous");
         cbCategory.getSelectionModel().select("Pop");
 
+    }
+    public void setMainController(MainController mainController) {
     }
 
     public void onSaveSong(ActionEvent actionEvent) {
@@ -52,40 +54,39 @@ public class NewSongController {
         }
         Stage stage = (Stage) txtfTitle.getScene().getWindow();
         stage.close();
-
     }
 
     private void handleNewSong() {
+
+        // gets all user input.
         String title = txtfTitle.getText();
         String artist = txtfArtist.getText();
         String category = (String) cbCategory.getValue();
         String time = txtfTime.getText();
         String filePath = txtfFilePath.getText();
 
+        // calculates the time to seconds.
         int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
-
+        // invalid input
         if (calculatedTime == -1) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
             alert.showAndWait();
             return;
         }
 
-            Song newSong = new Song(title, artist, category, filePath, calculatedTime, -1);
+        Song newSong = new Song(title, artist, category, filePath, calculatedTime, -1);
 
-            try {
-                newSongModel.createNewSong(newSong);
-                showConfirmation("Song Added", "A new song has been successfully added.");
-                mainModel.refreshSongs();
-            } catch (Exception e) {
-                displayError("Error", "An error occurred while adding the song.", e);
-            }
-            finally {
-                mainModel.refreshSongs();
-            }
-
+        try {
+            newSongModel.createNewSong(newSong);
+            showConfirmation("Song Added", " has been successfully added.");
+        } catch (Exception e) {
+            displayError("Error", "An error occurred while adding the song.", e);
+        }
+        mainModel.refreshSongs();
     }
     private void handleSongEdit() {
         if (selecetedSong != null) {
+            // gets all user input and sets it.
             String title = txtfTitle.getText();
             String artist = txtfArtist.getText();
             String category = (String) cbCategory.getValue();
@@ -93,14 +94,14 @@ public class NewSongController {
             String filePath = txtfFilePath.getText();
 
             int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
-
+            // invalid time input.
             if (calculatedTime == -1) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
                 alert.showAndWait();
                 return;
             }
 
-            // Editing an existing song
+            // updates the existing song
             selecetedSong.setTitle(title);
             selecetedSong.setArtist(artist);
             selecetedSong.setCategory(category);
@@ -135,9 +136,7 @@ public class NewSongController {
 
         // Set the action for the OK button
         alert.setOnHidden(event -> {
-            if (alert.getResult() == okButton){
-               // mainModel.refreshSongs();
-            }
+            if (alert.getResult() == okButton){}
         });
 
         alert.showAndWait();

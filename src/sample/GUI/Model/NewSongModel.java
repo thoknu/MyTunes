@@ -2,11 +2,13 @@ package sample.GUI.Model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import sample.BE.Song;
-import sample.BLL.SongManager;
-import sample.DAL.SongDAO;
 
 import java.util.List;
+
+import sample.BE.Song;
+import sample.BLL.SongManager;
+
+
 
 public class NewSongModel {
     private SongManager songManager;
@@ -26,6 +28,8 @@ public class NewSongModel {
         Song song = songManager.createNewSong(newSong);
         songsToBeViewed.add(song);
     }
+
+    //////////// DELETE LATER Maybe? - 0 usages ///////////
     public ObservableList<Song> getSongsToBeViewed() {
         return songsToBeViewed;
     }
@@ -34,7 +38,7 @@ public class NewSongModel {
         songsToBeViewed.clear();
         songsToBeViewed.addAll(searchResults);
     }
-
+    ////////////////////////////////////////////////////////
     public void updateSong(Song updatedSong) throws Exception {
         songManager.updateSong(updatedSong);
 
