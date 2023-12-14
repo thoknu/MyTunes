@@ -140,8 +140,29 @@ public class MainController {
         lblCurrentSong.setText(mainModel.nextSong(false) + isPlayingString);
     }
 
+    @FXML
     public void onFilterSearch(ActionEvent actionEvent) {
+        String searchText = txtfFilterSearch.getText();
+        if (!searchText.isEmpty()) {
+            try {
+                List<Song> searchResult = mainModel.searchSongs(searchText);
+                updateTableView(searchResult);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // If the search field is empty, show all songs
+            try {
+                mainModel.refreshSongs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    public void updateTableView(List<Song> songs) {
+        tvSongs.getItems().clear();
+        tvSongs.getItems().addAll(songs);
     }
 
     public void onNewPlaylist(ActionEvent actionEvent) throws IOException {

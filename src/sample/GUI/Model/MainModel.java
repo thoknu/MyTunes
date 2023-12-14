@@ -115,6 +115,10 @@ public class MainModel {
         }
     }
 
+    public List<Song> searchSongs(String query) throws Exception {
+        return songManager.searchSongs(query);
+    }
+
     public void deleteSong(Song selectedSong)throws Exception {
         // Deletes song in DAL
         songManager.deleteSong(selectedSong);
