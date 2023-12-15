@@ -92,6 +92,24 @@ public class MainController {
         colPlaylistTime.setCellValueFactory(new PropertyValueFactory<>("formattedTotalTime"));
     }
 
+
+    ////////////////////////////
+    //// Playlist Functions ////
+    ////////////////////////////
+
+    public void onNewPlaylist(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewPlaylist.fxml"));
+        Parent root = loader.load();
+
+        NewPlaylistController controller = loader.getController();
+        controller.setMainModel(mainModel);
+
+        Stage stage = new Stage();
+        stage.setTitle("Create New Playlist");
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
+    }
+
     private void setupPlaylistSelectionListener() {
         tvPlaylists.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -126,161 +144,6 @@ public class MainController {
             e.printStackTrace();
         }
     }
-
-    private void displayError(Throwable t) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("-You are stupid-");
-        alert.setHeaderText(t.getMessage());
-        alert.showAndWait();
-    }
-    public void onPreviousSong(ActionEvent actionEvent) throws IOException {
-        mainModel.previousSong(true);
-        lblCurrentSong.setText(mainModel.previousSong(false) + isPlayingString);
-    }
-
-    public void onPlaySong(ActionEvent actionEvent) throws IOException {
-        mainModel.tempValueForSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), true);
-        mediaPlayer = mainModel.getMediaPlayer();
-        mediaPlayer.setVolume(sliderVolumeSlider.getValue() * 0.01);
-        lblCurrentSong.setText(mainModel.playPauseSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), false) + isPlayingString);
-    }
-
-    public void onNextSong(ActionEvent actionEvent) throws IOException {
-        mainModel.nextSong(true);
-        lblCurrentSong.setText(mainModel.nextSong(false) + isPlayingString);
-    }
-
-    @FXML
-    public void onFilterSearch(ActionEvent actionEvent) {
-        String searchText = txtfFilterSearch.getText();
-        if (!searchText.isEmpty()) {
-            try {
-                List<Song> searchResult = mainModel.searchSongs(searchText);
-                updateTableView(searchResult);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            // If the search field is empty, show all songs
-            try {
-                mainModel.refreshSongs();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void updateTableView(List<Song> songs) {
-        tvSongs.getItems().clear();
-        tvSongs.getItems().addAll(songs);
-    }
-
-    public void onNewPlaylist(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewPlaylist.fxml"));
-        Parent root = loader.load();
-
-        NewPlaylistController controller = loader.getController();
-        controller.setMainModel(mainModel);
-
-        Stage stage = new Stage();
-        stage.setTitle("Create New Playlist");
-        stage.setScene(new Scene(root));
-        stage.showAndWait();
-    }
-
-    public void onEditPlaylist(ActionEvent actionEvent) throws IOException {
-        // Get the selected playlist from the tableview
-        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
-        if (selectedPlaylist != null){
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewPlaylist.fxml"));
-            Parent root = loader.load();
-            NewPlaylistController controller = loader.getController();
-            controller.setMainModel(mainModel);
-            controller.setEditingPlaylist(selectedPlaylist);
-
-            Stage stage = new Stage();
-            stage.setTitle("Edit playlist");
-            stage.setScene(new Scene(root));
-            stage.show();
-        }
-    }
-
-    public void onDeletePlaylist(ActionEvent actionEvent) {
-        // Get the selected playlist from the tableview
-        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
-        if (selectedPlaylist != null) {
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the playlist: " + selectedPlaylist.getName() + "?", ButtonType.YES, ButtonType.NO);
-            confirmAlert.showAndWait();
-
-            if (confirmAlert.getResult() == ButtonType.YES) {
-                mainModel.deletePlaylist(selectedPlaylist);
-            }
-        }
-    }
-
-    public void onNewSong(ActionEvent actionEvent) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
-        Parent root = loader.load();
-
-        NewSongController controller = loader.getController();
-        controller.setMainModel(mainModel);
-        controller.setMainController(this);
-
-        Stage stage = new Stage();
-        stage.setTitle("Import New Song");
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-
-    public void onEditSong(ActionEvent actionEvent) throws IOException {
-        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
-
-        if (selectedSong != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
-            Parent root = loader.load();
-
-            NewSongController controller = loader.getController();
-            controller.setMainModel(mainModel);
-            controller.setUpdatedSong(selectedSong);
-
-
-            Stage stage = new Stage();
-            stage.setTitle("Edit Song");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Please select a song to edit");
-            alert.showAndWait();
-        }
-
-    }
-
-    public void onDeleteSong(ActionEvent actionEvent) {
-        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
-
-        if (selectedSong != null) {
-            try {
-                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION,
-                        "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?",
-                        ButtonType.YES, ButtonType.NO);
-                confirmAlert.showAndWait();
-
-                if (confirmAlert.getResult() == ButtonType.YES){
-                    mainModel.deleteSong(selectedSong);
-                    tvPlaylists.refresh();
-                }
-            } catch (Exception e)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Something went wrong while trying to delete, please try again");
-                alert.showAndWait();
-            }
-        }
-    }
-
-    public void onClose(ActionEvent actionEvent) {
-        Platform.exit();
-    }
-
     public void onAddSongToPlaylist(ActionEvent actionEvent) {
         Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
         Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
@@ -340,5 +203,157 @@ public class MainController {
         }
     }
 
+    public void onEditPlaylist(ActionEvent actionEvent) throws IOException {
+        // Get the selected playlist from the tableview
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist != null){
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewPlaylist.fxml"));
+            Parent root = loader.load();
+            NewPlaylistController controller = loader.getController();
+            controller.setMainModel(mainModel);
+            controller.setEditingPlaylist(selectedPlaylist);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit playlist");
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+    }
+
+    public void onDeletePlaylist(ActionEvent actionEvent) {
+        // Get the selected playlist from the tableview
+        Playlist selectedPlaylist = tvPlaylists.getSelectionModel().getSelectedItem();
+        if (selectedPlaylist != null) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the playlist: " + selectedPlaylist.getName() + "?", ButtonType.YES, ButtonType.NO);
+            confirmAlert.showAndWait();
+
+            if (confirmAlert.getResult() == ButtonType.YES) {
+                mainModel.deletePlaylist(selectedPlaylist);
+            }
+        }
+    }
+
+    ////////////////////////
+    //// Song Functions ////
+    ////////////////////////
+
+    public void onNewSong(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
+        Parent root = loader.load();
+
+        NewSongController controller = loader.getController();
+        controller.setMainModel(mainModel);
+        controller.setMainController(this);
+
+        Stage stage = new Stage();
+        stage.setTitle("Import New Song");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    @FXML
+    public void onFilterSearch(ActionEvent actionEvent) {
+        String searchText = txtfFilterSearch.getText();
+        if (!searchText.isEmpty()) {
+            try {
+                List<Song> searchResult = mainModel.searchSongs(searchText);
+                updateTableView(searchResult);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // If the search field is empty, show all songs
+            try {
+                mainModel.refreshSongs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateTableView(List<Song> songs) {
+        tvSongs.getItems().clear();
+        tvSongs.getItems().addAll(songs);
+    }
+
+    public void onEditSong(ActionEvent actionEvent) throws IOException {
+        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/NewSong.fxml"));
+            Parent root = loader.load();
+
+            NewSongController controller = loader.getController();
+            controller.setMainModel(mainModel);
+            controller.setUpdatedSong(selectedSong);
+
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Song");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Please select a song to edit");
+            alert.showAndWait();
+        }
+
+    }
+
+    public void onDeleteSong(ActionEvent actionEvent) {
+        Song selectedSong = tvSongs.getSelectionModel().getSelectedItem();
+
+        if (selectedSong != null) {
+            try {
+                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?",
+                        ButtonType.YES, ButtonType.NO);
+                confirmAlert.showAndWait();
+
+                if (confirmAlert.getResult() == ButtonType.YES){
+                    mainModel.deleteSong(selectedSong);
+                    tvPlaylists.refresh();
+                }
+            } catch (Exception e)
+            {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION,"Something went wrong while trying to delete, please try again");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    ////////////////////////////////
+    //// Media-player Functions ////
+    ////////////////////////////////
+
+    public void onPreviousSong(ActionEvent actionEvent) throws IOException {
+        mainModel.previousSong(true);
+        lblCurrentSong.setText(mainModel.previousSong(false) + isPlayingString);
+    }
+
+    public void onPlaySong(ActionEvent actionEvent) throws IOException {
+        mainModel.tempValueForSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), true);
+        mediaPlayer = mainModel.getMediaPlayer();
+        mediaPlayer.setVolume(sliderVolumeSlider.getValue() * 0.01);
+        lblCurrentSong.setText(mainModel.playPauseSong(lvSongsInPlaylist.getSelectionModel().getSelectedIndex(), false) + isPlayingString);
+    }
+
+    public void onNextSong(ActionEvent actionEvent) throws IOException {
+        mainModel.nextSong(true);
+        lblCurrentSong.setText(mainModel.nextSong(false) + isPlayingString);
+    }
+    ////////////////////////
+    //// Misc Functions ////
+    ////////////////////////
+
+    public void onClose(ActionEvent actionEvent) {
+        Platform.exit();
+    }
+
+    private void displayError(Throwable t) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("-You are stupid-");
+        alert.setHeaderText(t.getMessage());
+        alert.showAndWait();
+    }
 
 }

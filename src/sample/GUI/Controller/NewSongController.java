@@ -39,6 +39,9 @@ public class NewSongController {
     }
     public void setMainController(MainController mainController) {
     }
+    public void setMainModel(MainModel mainModel) {
+        this.mainModel = mainModel;
+    }
 
     public void onSaveSong(ActionEvent actionEvent) {
 
@@ -84,6 +87,7 @@ public class NewSongController {
         }
         mainModel.refreshSongs();
     }
+
     private void handleSongEdit() {
         if (selecetedSong != null) {
             // gets all user input and sets it.
@@ -94,7 +98,7 @@ public class NewSongController {
             String filePath = txtfFilePath.getText();
 
             int calculatedTime = newSongModel.calculateSecondsFromUserInput(time);
-            // invalid time input.
+            // if invalid time input.
             if (calculatedTime == -1) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
                 alert.showAndWait();
@@ -123,7 +127,6 @@ public class NewSongController {
         stage.close();
     }
 
-
     private void showConfirmation(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -141,6 +144,7 @@ public class NewSongController {
 
         alert.showAndWait();
     }
+
     private void displayError(String title, String content, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Something went wrong");
@@ -157,10 +161,6 @@ public class NewSongController {
         e.printStackTrace();
 
         alert.showAndWait();
-    }
-
-    public void setMainModel(MainModel mainModel) {
-        this.mainModel = mainModel;
     }
 
     public void setUpdatedSong(Song updatedSong) {

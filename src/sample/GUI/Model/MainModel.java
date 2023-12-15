@@ -36,6 +36,10 @@ public class MainModel {
         availableSongs = FXCollections.observableArrayList(songManager.readAllSongs());
     }
 
+    ////////////////////////////
+    //// Playlist Functions ////
+    ////////////////////////////
+
     public ObservableList<Playlist> getObservablePlaylists() {
         return availablePlaylists;
     }
@@ -112,6 +116,18 @@ public class MainModel {
         }
     }
 
+    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
+        playlistManager.moveSongUp(playlistID, currentOrder);
+    }
+
+    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
+        playlistManager.moveSongDown(playlistID, currentOrder);
+    }
+
+    ////////////////////////
+    //// Song Functions ////
+    ////////////////////////
+
     public void refreshSongs() {
         try {
             // Reload songs from the database
@@ -156,6 +172,10 @@ public class MainModel {
         media = new Media(song.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
     }
+
+    ////////////////////////////////
+    //// Media-player Functions ////
+    ////////////////////////////////
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
@@ -243,12 +263,5 @@ public class MainModel {
         }
     }
 
-    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
-            playlistManager.moveSongUp(playlistID, currentOrder);
-    }
-
-    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
-        playlistManager.moveSongDown(playlistID, currentOrder);
-    }
 
 }
