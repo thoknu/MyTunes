@@ -130,9 +130,20 @@ public class MainModel {
     public void deleteSong(Song selectedSong)throws Exception {
         // Deletes song in DAL
         songManager.deleteSong(selectedSong);
+        //refresh playlists to update their info
+        refreshPlaylists();
         // removes it from observable list and UI.
         availableSongs.remove(selectedSong);
+    }
 
+    private void refreshPlaylists() {
+        // Fetch the latest playlist data and update availablePlaylists
+        try {
+            List<Playlist> updatedPlaylists = playlistManager.getAllPlaylists();
+            availablePlaylists.setAll(updatedPlaylists);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /// 0 Usages ///

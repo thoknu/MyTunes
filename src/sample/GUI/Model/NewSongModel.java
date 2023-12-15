@@ -93,7 +93,6 @@ public class NewSongModel {
         } catch (Exception e) {
             return -1;
         }
-
     }
 
     private boolean userInputValidation(String timeFromUser)

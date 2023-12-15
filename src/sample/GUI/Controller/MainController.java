@@ -264,8 +264,10 @@ public class MainController {
                         "Are you sure you want to delete this song: " + selectedSong.getTitle() + "?",
                         ButtonType.YES, ButtonType.NO);
                 confirmAlert.showAndWait();
+
                 if (confirmAlert.getResult() == ButtonType.YES){
                     mainModel.deleteSong(selectedSong);
+                    tvPlaylists.refresh();
                 }
             } catch (Exception e)
             {
