@@ -3,8 +3,6 @@ package sample.GUI.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.List;
-
 import sample.BE.Song;
 import sample.BLL.SongManager;
 
@@ -12,7 +10,6 @@ import sample.BLL.SongManager;
 
 public class NewSongModel {
     private SongManager songManager;
-
     private ObservableList<Song> songsToBeViewed = FXCollections.observableArrayList();
 
 
@@ -24,21 +21,22 @@ public class NewSongModel {
         }
     }
 
+    /**
+     *  Method for creating new song object and sending down layers.
+     *  Also adds the song to the list of songs.
+     * @param newSong
+     * @throws Exception
+     */
     public void createNewSong(Song newSong) throws Exception {
         Song song = songManager.createNewSong(newSong);
         songsToBeViewed.add(song);
     }
 
-    //////////// DELETE LATER Maybe? - 0 usages ///////////
-    public ObservableList<Song> getSongsToBeViewed() {
-        return songsToBeViewed;
-    }
-    public void searchSong (String query) throws Exception{
-        List<Song> searchResults = songManager.searchSongs(query);
-        songsToBeViewed.clear();
-        songsToBeViewed.addAll(searchResults);
-    }
-    ////////////////////////////////////////////////////////
+    /**
+     * Method for updating song, much like creating a song.
+     * @param updatedSong
+     * @throws Exception
+     */
     public void updateSong(Song updatedSong) throws Exception {
         songManager.updateSong(updatedSong);
 
@@ -56,6 +54,14 @@ public class NewSongModel {
         }
     }
 
+    /**
+     * Method for calculating the user input for time.
+     * takes the validated input from method:userInputValidation
+     * splits the user input into parts for a String array which then determines
+     * how the time should be calculated depending on how many timeparts there are.
+     * @param timeFromUser
+     * returns either the calculated time in seconds, or a -1 to show it was invalid input.
+     */
     public int calculateSecondsFromUserInput(String timeFromUser)
     {
         try {
@@ -95,18 +101,24 @@ public class NewSongModel {
         }
     }
 
+    /**
+     * Method to validate the timeFromUser.
+     * @param timeFromUser
+     * @return
+     */
     private boolean userInputValidation(String timeFromUser)
     {
+        // input cant be empty
         if (timeFromUser == null || timeFromUser.trim().isEmpty()) {
             return false;
         }
 
         String[] timeParts = timeFromUser.split("[\\s:,;.-]+");
-
+        // input cant be split into more than 3 parts
         if (timeParts.length >= 4) {
             return false;
         }
-
+        // input cant be letters.
         for (String part : timeParts) {
             if (!part.matches("^[0-9]+$")) {
                     return false;
