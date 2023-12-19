@@ -29,7 +29,7 @@ public class NewSongModel {
      * @throws SQLException
      */
     public void createNewSong(Song newSong) throws SQLException {
-        Song song = songManager.createNewSong(newSong);
+        Song song = songManager.createNew0Song(newSong);
         songsToBeViewed.add(song);
     }
 

@@ -59,19 +59,13 @@ public class NewSongController {
 
     public void onSaveSong(ActionEvent actionEvent) {
 
-        try {
-            if (selecetedSong == null) {
-                handleNewSong();
-            } else {
-                handleSongEdit();
-            }
-
-        } catch (SQLException e) {
-            displayError("Something went wrong", "An error occurred trying to save the song.", e);
+        if (selecetedSong == null) {
+            handleNewSong();
+        } else {
+            handleSongEdit();
         }
         closeWindow();
     }
-
 
     /**
      * Handles creating a new song and adding it to the database.

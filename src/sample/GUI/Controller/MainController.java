@@ -345,6 +345,7 @@ public class MainController {
         }
     }
 
+
     ////////////////////////
     //// Helper Methods ////
     ////      Songs     ////
@@ -359,8 +360,6 @@ public class MainController {
         tvSongs.getItems().clear();
         tvSongs.getItems().addAll(songs);
     }
-
-
 
 
     ////////////////////////////////
@@ -596,8 +595,6 @@ public class MainController {
         currentPlaylistId = playlistId;
         isPaused = false;
     }
-
-
 
 
     ////////////////////////

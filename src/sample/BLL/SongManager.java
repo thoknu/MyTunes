@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class SongManager {
 
-    private ISongDataAccess songDAO;
+    private final SongDAO songDAO;
     private Searcher songSearcher = new Searcher();
 
     public SongManager() throws SQLException, IOException {
@@ -37,7 +37,7 @@ public class SongManager {
      * @return the created song.
      * @throws SQLException if a database access error occurs.
      */
-    public Song createNewSong(Song newSong) throws SQLException {
+    public Song createNew0Song(Song newSong) throws SQLException {
         return songDAO.createSong(newSong);
     }
 
@@ -55,7 +55,7 @@ public class SongManager {
      * @param selectedSong the song to delete.
      * @throws SQLException if a database access error occurs.
      */
-    public void deleteSong(Song selectedSong) throws Exception {
+    public void deleteSong(Song selectedSong) throws SQLException {
         songDAO.deleteSong(selectedSong);
     }
 

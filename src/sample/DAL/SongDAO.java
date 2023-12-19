@@ -112,14 +112,14 @@ public class SongDAO implements ISongDataAccess {
      * @param song The song to be deleted.
      * @throws Exception for database access errors.
      */
-    public void deleteSong(Song song) throws Exception {
+    public void deleteSong(Song song) throws SQLException {
         String deleteFromPlaylistSQL = "DELETE FROM PlaylistSongs WHERE SongID = ?";
         try (Connection conn = databaseConnector.getConnection()) {
             deleteSongFromPlaylists(conn, song.getId());
             deleteSong(conn, song.getId());
         }catch (SQLException ex) {
             ex.printStackTrace();
-            throw new Exception("Could not delete song", ex);
+            throw new SQLException("Could not delete song", ex);
         }
     }
 
