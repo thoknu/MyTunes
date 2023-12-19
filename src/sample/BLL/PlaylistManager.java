@@ -15,6 +15,7 @@ public class PlaylistManager {
 
     /**
      * Constructs the PlaylistManager and initializes the PlaylistDAO.
+     *
      * @throws Exception if an error occurs during DAO initialization.
      */
     public PlaylistManager() throws Exception {
@@ -23,6 +24,7 @@ public class PlaylistManager {
 
     /**
      * Creates a new playlist with the given name.
+     *
      * @param name the name of the new playlist.
      * @return the created Playlist object.
      * @throws SQLException if a database access error occurs.
@@ -33,6 +35,7 @@ public class PlaylistManager {
 
     /**
      * Retrieves all playlists.
+     *
      * @return a list of all playlists.
      * @throws Exception if an error occurs during data retrieval.
      */
@@ -42,6 +45,7 @@ public class PlaylistManager {
 
     /**
      * Updates a selected playlist.
+     *
      * @param selectedPlaylist the playlist to be updated.
      * @throws IllegalArgumentException if selectedPlaylist is null.
      * @throws Exception if an error occurs during the update.
@@ -55,6 +59,7 @@ public class PlaylistManager {
 
     /**
      * Deletes a specified playlist.
+     *
      * @param playlist the playlist to be deleted.
      * @throws IllegalArgumentException if playlist is null.
      * @throws SQLException if a database access error occurs.
@@ -68,6 +73,7 @@ public class PlaylistManager {
 
     /**
      * Retrieves all songs in a specific playlist.
+     *
      * @param playlist the playlist whose songs are to be retrieved.
      * @return a list of songs in the specified playlist.
      * @throws IllegalArgumentException if playlist is null.
@@ -82,6 +88,7 @@ public class PlaylistManager {
 
     /**
      * Adds a song to a playlist.
+     *
      * @param playlistID the ID of the playlist.
      * @param songID the ID of the song to add.
      * @throws SQLException if a database access error occurs.
@@ -92,6 +99,7 @@ public class PlaylistManager {
 
     /**
      * Removes a song from a playlist.
+     *
      * @param entryID the entry ID of the song in the playlist.
      * @param playlistID the ID of the playlist.
      * @throws SQLException if a database access error occurs.
@@ -100,4 +108,12 @@ public class PlaylistManager {
         playlistDAO.removeSongFromPlaylist(entryID, playlistID);
     }
 
+
+    public void moveSongUp(int playlistID, int currentOrder) throws SQLException {
+        playlistDAO.moveSongUp(playlistID, currentOrder);
+    }
+
+    public void moveSongDown(int playlistID, int currentOrder) throws SQLException {
+        playlistDAO.moveSongDown(playlistID, currentOrder);
+    }
 }

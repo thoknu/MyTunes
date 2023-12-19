@@ -24,6 +24,7 @@ public class SongManager {
 
     /**
      * Retrieves all songs.
+     *
      * @return a list of all songs.
      * @throws SQLException if a database access error occurs.
      */
@@ -33,6 +34,7 @@ public class SongManager {
 
     /**
      * Creates a new song.
+     *
      * @param newSong the song to create.
      * @return the created song.
      * @throws SQLException if a database access error occurs.
@@ -43,6 +45,7 @@ public class SongManager {
 
     /**
      * Updates an existing song.
+     *
      * @param selectedSong the song to update.
      * @throws SQLException if a database access error occurs.
      */
@@ -52,6 +55,7 @@ public class SongManager {
 
     /**
      * Deletes a song.
+     *
      * @param selectedSong the song to delete.
      * @throws SQLException if a database access error occurs.
      */
@@ -61,6 +65,7 @@ public class SongManager {
 
     /**
      * Searches for songs based on a query.
+     *
      * @param query the search query.
      * @return a list of songs that match the query.
      * @throws SQLException if a database access error occurs.
@@ -72,6 +77,7 @@ public class SongManager {
 
     /**
      * Retrieves a song by its ID.
+     *
      * @param songID the ID of the song.
      * @return the song.
      * @throws SQLException if a database access error occurs.

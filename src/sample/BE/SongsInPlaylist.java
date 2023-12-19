@@ -8,6 +8,15 @@ public class SongsInPlaylist {
     private String artist;
     private int order;
 
+    /**
+     * Sets the values of the song in the playlist.
+     *
+     * @param entryID The ID of the entry into the playlist into the database.
+     * @param playlistID The ID of the playlist that the song is in.
+     * @param songID The ID of the selected song.
+     * @param title The title of the song.
+     * @param artist The artist who made the song.
+     */
     public SongsInPlaylist(int entryID, int playlistID, int songID, String title, String artist) {
         this.entryID = entryID;
         this.playlistID = playlistID;

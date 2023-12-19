@@ -13,7 +13,17 @@ public class Song {
     private int id;
     private StringProperty formattedTime;
 
-    public Song(String title, String artist, String category, String filePath,int seconds, int id) {
+    /**
+     * Sets the information of the song.
+     *
+     * @param title The title of the song.
+     * @param artist The artist who made the song.
+     * @param category The category that the song is in.
+     * @param filePath The name of the file.
+     * @param seconds The duration of the song in seconds.
+     * @param id The ID of the song.
+     */
+    public Song(String title, String artist, String category, String filePath, int seconds, int id) {
         setTitle(title);
         setArtist(artist);
         setCategory(category);

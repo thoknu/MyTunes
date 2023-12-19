@@ -25,8 +25,9 @@ public class NewSongModel {
     /**
      *  Method for creating new song object and sending down layers.
      *  Also adds the song to the list of songs.
-     * @param newSong
-     * @throws SQLException
+     *
+     * @param newSong The song that needs to be created.
+     * @throws SQLException If the song cannot be created.
      */
     public void createNewSong(Song newSong) throws SQLException {
         Song song = songManager.createNew0Song(newSong);
@@ -35,8 +36,9 @@ public class NewSongModel {
 
     /**
      * Method for updating song, much like creating a song.
-     * @param updatedSong
-     * @throws SQLException
+     *
+     * @param updatedSong The new song that replaces the previous one.
+     * @throws SQLException If the song cannot be updated.
      */
     public void updateSong(Song updatedSong) throws SQLException {
         songManager.updateSong(updatedSong);
@@ -57,10 +59,11 @@ public class NewSongModel {
 
     /**
      * Method for calculating the user input for time.
-     * takes the validated input from method:userInputValidation
+     * Takes the validated input from method:userInputValidation
      * splits the user input into parts for a String array which then determines
      * how the time should be calculated depending on how many timeparts there are.
-     * @param timeFromUser
+     *
+     * @param timeFromUser Input amount of time from the user.
      * returns either the calculated time in seconds, or a -1 to show it was invalid input.
      */
     public int calculateSecondsFromUserInput(String timeFromUser)
@@ -104,8 +107,9 @@ public class NewSongModel {
 
     /**
      * Method to validate the timeFromUser.
-     * @param timeFromUser
-     * @return
+     *
+     * @param timeFromUser The user input time.
+     * @return true or false depending on if the time is in a valid format.
      */
     private boolean userInputValidation(String timeFromUser)
     {

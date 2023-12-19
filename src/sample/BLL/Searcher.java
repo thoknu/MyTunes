@@ -12,6 +12,7 @@ public class Searcher {
 
     /**
      * Searches for songs based on a query.
+     *
      * @param searchBase the list of songs to search through.
      * @param query the search query.
      * @return a list of songs that match the query.
@@ -29,6 +30,7 @@ public class Searcher {
 
     /**
      * Checks if a song matches the search query.
+     *
      * @param song the song to check.
      * @param query the search query.
      * @return true if the song matches the query.

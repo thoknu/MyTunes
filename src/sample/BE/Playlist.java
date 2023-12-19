@@ -11,6 +11,14 @@ public class Playlist {
     private SimpleIntegerProperty totalTimeInSeconds = new SimpleIntegerProperty();
     private SimpleStringProperty formattedTotalTime = new SimpleStringProperty();
 
+    /**
+     * Sets the information of the playlist.
+     *
+     * @param id The unique ID of the playlist.
+     * @param name The name given to the playlist.
+     * @param songCount The amount of songs in the playlist.
+     * @param totalTimeInSeconds The duration of the playlist.
+     */
     public Playlist(int id, String name, int songCount, int totalTimeInSeconds) {
         setId(id);
         setName(name);

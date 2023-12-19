@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import sample.BE.Playlist;
 import sample.GUI.Model.MainModel;
+import sample.GUI.Model.NewPlaylistModel;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -17,8 +18,12 @@ import java.util.ResourceBundle;
 public class NewPlaylistController{
     @FXML
     private TextField txtfName;
-    private MainModel mainModel;
+    private NewPlaylistModel newPlaylistModel;
     private Playlist editingPlaylist;
+
+    public NewPlaylistController() throws Exception {
+        newPlaylistModel = new NewPlaylistModel();
+    }
 
     /**
      * Sets the playlist to be edited in this controller.
@@ -40,14 +45,14 @@ public class NewPlaylistController{
         if (!playlistName.isEmpty()) {
             if (editingPlaylist == null) {
             try { // Creating a new playlist
-                    Playlist newPlaylist = mainModel.createPlaylist(playlistName);
-                    mainModel.getObservablePlaylists().add(newPlaylist);
+                    Playlist newPlaylist = newPlaylistModel.createPlaylist(playlistName);
+                    newPlaylistModel.getObservablePlaylists().add(newPlaylist);
             } catch (Exception e) {
                 displayError("A problem occured", "A problem occured trying to save the playlist");}
             } else { // Updating an existing playlist
-                    editingPlaylist.setName(playlistName);
-                    mainModel.editPlaylist(editingPlaylist);
-                }
+                editingPlaylist.setName(playlistName);
+                newPlaylistModel.editPlaylist(editingPlaylist);
+            }
             closeStage(actionEvent);
         }
 
@@ -60,15 +65,6 @@ public class NewPlaylistController{
      */
     public void onCancelPlaylist(ActionEvent actionEvent) {
         closeStage(actionEvent);
-    }
-
-    /**
-     * Sets the main model for this controller.
-     *
-     * @param mainModel The main model instance.
-     */
-    public void setMainModel(MainModel mainModel) {
-        this.mainModel = mainModel;
     }
 
     /**

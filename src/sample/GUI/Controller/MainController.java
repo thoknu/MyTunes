@@ -61,7 +61,6 @@ public class MainController {
     private final MainModel mainModel;
     private MediaPlayer mediaPlayer;
     private Media media;
-    private String isPlayingString = "... Is Playing";
     private Song currentSong;
     private int currentPlaylistId;
     private boolean isPaused = false;
@@ -705,7 +704,6 @@ public class MainController {
         // Configure NewPlaylistController instances
         if (controller instanceof NewPlaylistController) {
             NewPlaylistController playlistController = (NewPlaylistController) controller;
-            playlistController.setMainModel(mainModel);
             // If the entity is a Playlist, set it in the controller for editing
             if (entity instanceof Playlist) {
                 playlistController.setEditingPlaylist((Playlist) entity);
