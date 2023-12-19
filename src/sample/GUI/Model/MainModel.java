@@ -10,6 +10,7 @@ import sample.BLL.PlaylistManager;
 import javafx.collections.ObservableList;
 import sample.BLL.SongManager;
 import sample.DAL.DatabaseConnector;
+import sample.DAL.PlaylistDAO;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class MainModel {
 
     private PlaylistManager playlistManager;
     private SongManager songManager;
+    private PlaylistDAO playlistDAO;
     private ObservableList<Playlist> availablePlaylists;
     private ObservableList<Song> availableSongs;
     private List<File> songs;
@@ -32,6 +34,7 @@ public class MainModel {
     public MainModel() throws Exception {
         playlistManager = new PlaylistManager();
         songManager = new SongManager();
+        playlistDAO = new PlaylistDAO();
         availablePlaylists = FXCollections.observableArrayList(playlistManager.getAllPlaylists());
         availableSongs = FXCollections.observableArrayList(songManager.readAllSongs());
     }
@@ -62,11 +65,15 @@ public class MainModel {
         return null;
     }
 
+    public Song getSongByID(int songID) throws SQLException {
+        return songManager.getSongByID(songID);
+    }
+
     /*public Song getSong(Playlist playlist, Song song) throws Exception {
         return playlistManager.getSong(playlist, song);
     }*/
 
-    public Playlist createPlaylist(String name) throws Exception {
+    public Playlist createPlaylist(String name) throws SQLException {
         return playlistManager.createPlaylist(name);
     }
 
@@ -117,11 +124,11 @@ public class MainModel {
     }
 
     public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
-        playlistManager.moveSongUp(playlistID, currentOrder);
+        playlistDAO.moveSongUp(playlistID, currentOrder);
     }
 
     public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
-        playlistManager.moveSongDown(playlistID, currentOrder);
+        playlistDAO.moveSongDown(playlistID, currentOrder);
     }
 
     ////////////////////////
@@ -162,106 +169,43 @@ public class MainModel {
         }
     }
 
-    /// 0 Usages ///
-    public void initializeSongs() throws IOException {
-        // Initialize the first song into the list of songs so that it will always play the first song if nothing is selected
-        song = songManager.getSong(0);
-        songNumber = 0;
-        songs = songManager.getSongs();
-        // put this info into the MediaPlayer
-        media = new Media(song.toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-    }
+
 
     ////////////////////////////////
     //// Media-player Functions ////
     ////////////////////////////////
 
-    public MediaPlayer getMediaPlayer() {
-        return mediaPlayer;
+
+    // Method to get the next song
+    public Song getNextSong(int playlistId, int currentSongId) throws Exception {
+        List<SongsInPlaylist> songsInPlaylist = playlistManager.getAllSongsInPlaylist(getPlaylistByID(playlistId));
+        for (int i = 0; i < songsInPlaylist.size(); i++) {
+            if (songsInPlaylist.get(i).getSongID() == currentSongId) {
+                // Check if it's not the last song
+                if (i < songsInPlaylist.size() - 1) {
+                    return songManager.getSongByID(songsInPlaylist.get(i + 1).getSongID());
+                }
+                break;
+            }
+        }
+        return null;
     }
 
-    public String tempValueForSong(int index, boolean play) throws IOException {
-        if (index != tempIndex) {
-            tempIndex = index;
-            return playPauseSong(index, play);
+    // Method to get the previous song
+    public Song getPreviousSong(int playlistId, int currentSongId) throws Exception {
+        List<SongsInPlaylist> songsInPlaylist = playlistManager.getAllSongsInPlaylist(getPlaylistByID(playlistId));
+        for (int i = 0; i < songsInPlaylist.size(); i++) {
+            if (songsInPlaylist.get(i).getSongID() == currentSongId) {
+                // Check if it's not the first song
+                if (i > 0) {
+                    return songManager.getSongByID(songsInPlaylist.get(i - 1).getSongID());
+                }
+                break;
+            }
         }
-        else {
-            return playPauseSong(songNumber, play);
-        }
+        return null;
     }
 
-    public String playPauseSong(int index, boolean play) throws IOException {
-        // Checks if the song has to play or just return the name of the song which is being played
-        if (play) {
-            // If the MediaPlayer is already playing, pause it
-            if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
-                mediaPlayer.pause();
-            }
-            // else play it
-            else {
-                return playSong(index);
-            }
-        }
-        else {
-            return songs.get(songNumber).getName();
-        }
-        return songs.get(songNumber).getName();
-    }
-
-    // This is used to actually play the song updating the MediaPlayer
-    public String playSong(int index) throws IOException {
-        // by getting in which song to play
-        songNumber = index;
-        song = songManager.getSong(index);
-        // and updating the MediaPlayer
-        media = new Media(song.toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
-        // and then return the title of the song to the MainController so that it can be displayed for the user
-        return songs.get(songNumber).getName();
-    }
-
-    public String previousSong(boolean previous) throws IOException {
-        // Checks first if it should return to the previous song in the list or just return the name of the current song for displaying
-        if (previous) {
-            // After that it stops the MediaPlayer so that it can refresh the MediaPlayer
-            mediaPlayer.stop();
-            // If the song number is more than 0, decrease the song number by one to go to the previous song
-            if (songNumber > 0) {
-                songNumber--;
-            }
-            // Else make the current song the last song in the list so that it loops
-            else {
-                songNumber = songs.size() - 1;
-            }
-            return playSong(songNumber);
-        }
-        else {
-            return songs.get(songNumber).getName();
-        }
-    }
-
-    public String nextSong(boolean skip) throws IOException {
-        // Checks first if it should skip to the next song in the list or just return the name of the current song for displaying
-        if (skip) {
-            // After that it stops the MediaPlayer so that it can refresh the MediaPlayer
-            mediaPlayer.stop();
-            // If the song less than the size of the song, increase the song number to go the next song
-            // The song size starts from 1 because thats how you load files, so we have to -1
-            if (songNumber < songs.size() - 1) {
-                songNumber++;
-            }
-            // Else set the song to the first song in the list
-            else {
-                songNumber = 0;
-            }
-            return playSong(songNumber);
-        }
-        else {
-            return songs.get(songNumber).getName();
-        }
-    }
 
 
 }

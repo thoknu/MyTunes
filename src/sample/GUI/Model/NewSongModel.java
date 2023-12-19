@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import sample.BE.Song;
 import sample.BLL.SongManager;
 
+import java.sql.SQLException;
 
 
 public class NewSongModel {
@@ -25,9 +26,9 @@ public class NewSongModel {
      *  Method for creating new song object and sending down layers.
      *  Also adds the song to the list of songs.
      * @param newSong
-     * @throws Exception
+     * @throws SQLException
      */
-    public void createNewSong(Song newSong) throws Exception {
+    public void createNewSong(Song newSong) throws SQLException {
         Song song = songManager.createNewSong(newSong);
         songsToBeViewed.add(song);
     }
@@ -35,9 +36,9 @@ public class NewSongModel {
     /**
      * Method for updating song, much like creating a song.
      * @param updatedSong
-     * @throws Exception
+     * @throws SQLException
      */
-    public void updateSong(Song updatedSong) throws Exception {
+    public void updateSong(Song updatedSong) throws SQLException {
         songManager.updateSong(updatedSong);
 
         int index = songsToBeViewed.indexOf(updatedSong);

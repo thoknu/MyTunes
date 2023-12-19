@@ -1,49 +1,82 @@
 package sample.BLL;
 
-        import sample.BE.Song;
-        import sample.DAL.ISongDataAccess;
-        import sample.DAL.SongDAO;
+import sample.BE.Song;
+import sample.DAL.ISongDataAccess;
+import sample.DAL.SongDAO;
 
-        import java.io.File;
-        import java.io.IOException;
-        import java.util.ArrayList;
-        import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Manages song-related operations, interfacing with the data access layer.
+ */
 public class SongManager {
 
     private ISongDataAccess songDAO;
     private Searcher songSearcher = new Searcher();
 
-    public SongManager() throws Exception {
+    public SongManager() throws SQLException, IOException {
         songDAO = new SongDAO();
     }
 
+    /**
+     * Retrieves all songs.
+     * @return a list of all songs.
+     * @throws SQLException if a database access error occurs.
+     */
     public List<Song> readAllSongs() throws Exception {
         return songDAO.readAllSongs();
     }
 
-    public Song createNewSong(Song newSong) throws Exception{
+    /**
+     * Creates a new song.
+     * @param newSong the song to create.
+     * @return the created song.
+     * @throws SQLException if a database access error occurs.
+     */
+    public Song createNewSong(Song newSong) throws SQLException {
         return songDAO.createSong(newSong);
     }
 
-    public void updateSong (Song selectedSong) throws Exception{
+    /**
+     * Updates an existing song.
+     * @param selectedSong the song to update.
+     * @throws SQLException if a database access error occurs.
+     */
+    public void updateSong(Song selectedSong) throws SQLException {
         songDAO.updateSong(selectedSong);
     }
-    public void deleteSong(Song selectedSong) throws Exception{
+
+    /**
+     * Deletes a song.
+     * @param selectedSong the song to delete.
+     * @throws SQLException if a database access error occurs.
+     */
+    public void deleteSong(Song selectedSong) throws Exception {
         songDAO.deleteSong(selectedSong);
     }
-    public List<Song> searchSongs (String query) throws Exception {
+
+    /**
+     * Searches for songs based on a query.
+     * @param query the search query.
+     * @return a list of songs that match the query.
+     * @throws SQLException if a database access error occurs.
+     */
+    public List<Song> searchSongs(String query) throws Exception {
         List<Song> allSongs = readAllSongs();
-        List<Song> searchResult = songSearcher.search(allSongs,query);
-        return searchResult;
+        return songSearcher.search(allSongs, query);
     }
 
-    public ArrayList<File> getSongs() throws IOException {
-        return songDAO.readLocalSongs();
+    /**
+     * Retrieves a song by its ID.
+     * @param songID the ID of the song.
+     * @return the song.
+     * @throws SQLException if a database access error occurs.
+     */
+    public Song getSongByID(int songID) throws SQLException {
+        return songDAO.getSongByID(songID);
     }
-
-    public File getSong(int index) throws IOException {
-        return songDAO.readLocalSong(index);
-    }
-
 }

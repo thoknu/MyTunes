@@ -9,18 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ISongDataAccess {
-    public List<Song> readAllSongs() throws Exception;
-
-    public Song readSong(Song song) throws Exception;
-
-    public ArrayList<File> readLocalSongs() throws IOException;
-
-    public File readLocalSong(int index) throws IOException;
 
     public Song createSong(Song song) throws Exception;
+
+    public List<Song> readAllSongs() throws SQLException;
 
     public void updateSong(Song song) throws Exception;
 
     public void deleteSong(Song song) throws Exception;
 
+    public Song getSongByID(int songID) throws SQLException;
 }

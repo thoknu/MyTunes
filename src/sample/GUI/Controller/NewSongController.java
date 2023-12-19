@@ -12,6 +12,9 @@ import sample.BE.Song;
 import sample.GUI.Model.MainModel;
 import sample.GUI.Model.NewSongModel;
 
+import java.sql.SQLException;
+import java.util.Optional;
+
 public class NewSongController {
     @FXML
     private TextField txtfTitle;
@@ -27,32 +30,32 @@ public class NewSongController {
     private MainModel mainModel;
     private Song selecetedSong;
 
+    /**
+     * Initializes the model and category combo box.
+     *
+     * @throws Exception
+     */
     @FXML
     public void initialize() throws Exception {
         newSongModel = new NewSongModel();
-        mainModel = new MainModel();
-
-        // sets the dropdown menu for all categories.
-        cbCategory.getItems().clear();
-        cbCategory.getItems().addAll("Blues","Classical","Country","Electronic","Funk","Instrumental","Jazz","Latin","Metal","Pop","Punk","R&B","Rap","Reggae","Rock","Techno","Miscellaneous");
-        cbCategory.getSelectionModel().select("Pop");
-
+        setupCategoryComboBox();
     }
 
-    // Ensures its the correct MainController used, so it isnt null.
-    public void setMainController(MainController mainController) {
-    }
-
-    // Ensures its the correct mainModel, so it isnt null when called.
+    /**
+     * Ensures it's the correct mainModel, so it isn't null when called.
+     *
+     * @param mainModel
+     */
     public void setMainModel(MainModel mainModel) {
         this.mainModel = mainModel;
     }
 
+
     /**
-    Method handling when the save button is pressed.
-    * it either creates a new song and sends it to the database.
-    or it handles if its a song edit, and updates it.
-    */
+     * Saves the new or edited song when the save button is clicked.
+     *
+     * @param actionEvent
+     */
 
     public void onSaveSong(ActionEvent actionEvent) {
 
@@ -63,18 +66,15 @@ public class NewSongController {
                 handleSongEdit();
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            displayError("Something went wrong", "An error occurred trying to save the song.", e);
         }
-        // Gets the MainWindow again.
-        Stage stage = (Stage) txtfTitle.getScene().getWindow();
-        stage.close();
+        closeWindow();
     }
 
+
     /**
-     * Method to create a new song down through the layers
-     * @param newSong with the param from getUserInput
-     * @ mainModel.refreshSongs(); updates the tableview for songs.
+     * Handles creating a new song and adding it to the database.
      */
     private void handleNewSong() {
         Song newSong = getUserInput();
@@ -82,46 +82,61 @@ public class NewSongController {
         if (newSong != null) {
             try {
                 newSongModel.createNewSong(newSong);
-                showConfirmation("Song Added", " has been successfully added.");
-            } catch (Exception e) {
+                showAlert("Song Added", "The song has been successfully added.");
+                mainModel.refreshSongs();
+            } catch (SQLException e) {
                 displayError("Error", "An error occurred while adding the song.", e);
             }
-            mainModel.refreshSongs();
         }
     }
 
     /**
-     * Method to handle a song edit
-     * @param updatedSong with the param from getUserInput
-     * selectedSong sets updated song with new params
-     * newSongModel.updateSong(selecetedSong); sends it down to DAL
+     * Handles updating an existing song with new information.
      */
     private void handleSongEdit() {
         Song updatedSong = getUserInput();
 
         if (updatedSong != null && selecetedSong != null) {
-            // Update the existing song
-            selecetedSong.setTitle(updatedSong.getTitle());
-            selecetedSong.setArtist(updatedSong.getArtist());
-            selecetedSong.setCategory(updatedSong.getCategory());
-            selecetedSong.setFilePath(updatedSong.getFilePath());
-            selecetedSong.setSeconds(updatedSong.getSeconds());
+            updateExistingSong(updatedSong);
 
             try {
-                newSongModel.updateSong(selecetedSong);
-                showConfirmation("Song Updated", "The song has been successfully updated.");
+                    newSongModel.updateSong(selecetedSong);
+                showAlert("Song Updated", "The song has been successfully updated.");
                 mainModel.refreshSongs();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 displayError("Error", "An error occurred while updating the song.", e);
             }
         }
     }
 
     /**
+     * Closes the song dialog window.
+     *
+     * @param actionEvent
+     */
+    public void onCancelSong(ActionEvent actionEvent) {
+        closeWindow();
+    }
+
+    ////////////////////////
+    //// Helper Methods ////
+    ////////////////////////
+
+    /**
+     * Code for setting up the category combo box
+     */
+    private void setupCategoryComboBox(){
+        cbCategory.getItems().clear();
+        cbCategory.getItems().addAll("Blues","Classical","Country","Electronic","Funk","Instrumental","Jazz","Latin","Metal","Pop","Punk","R&B","Rap","Reggae","Rock","Techno","Miscellaneous");
+        cbCategory.getSelectionModel().select("Pop");
+    }
+
+    /**
      * Method to handle user input
      * used to get the content of the different txtfields in the GUI
      * also calculates the time input, and checks if its valid.
-     * @return
+     *
+     * @return The song object with the input details.
      */
     private Song getUserInput() {
         String title = txtfTitle.getText();
@@ -134,8 +149,7 @@ public class NewSongController {
 
         // Check for invalid time input
         if (calculatedTime == -1) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Invalid time input: " + time + "\rtry format: 1.33.7");
-            alert.showAndWait();
+            showAlert("Invalid time input",  "Invalid time input: " + time + "\rtry format: 1.33.7");
             return null;
         }
 
@@ -143,65 +157,9 @@ public class NewSongController {
     }
 
     /**
-     * Method closes the FXML Window.
-     * and gets the Main FXML Window agian.
-     * @param actionEvent
-     */
-    public void onCancelSong(ActionEvent actionEvent) {
-        Stage stage = (Stage) txtfTitle.getScene().getWindow();
-        stage.close();
-    }
-
-    /**
-     * Method to create a popup message for confirmations etc.
-     * @param title
-     * @param content
-     */
-    private void showConfirmation(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-
-        // Add a custom OK button to the dialog
-        ButtonType okButton = new ButtonType("OK", ButtonType.OK.getButtonData());
-        alert.getButtonTypes().setAll(okButton);
-
-        // Set the action for the OK button
-        alert.setOnHidden(event -> {
-            if (alert.getResult() == okButton){}
-        });
-
-        alert.showAndWait();
-    }
-
-    /**
-     * Method to create a popup for displaying errors
-     * @param title
-     * @param content
-     * @param e
-     */
-    private void displayError(String title, String content, Exception e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Something went wrong");
-        alert.setHeaderText(e.getMessage());
-        alert.showAndWait();
-
-        ButtonType okButton = new ButtonType("OK", ButtonType.OK.getButtonData());
-        alert.getButtonTypes().setAll(okButton);
-
-        alert.setOnHidden(event -> {
-            if (alert.getResult() == okButton){}
-        });
-
-        e.printStackTrace();
-
-        alert.showAndWait();
-    }
-
-    /**
      *  A setter method for selectedSong
      *  populates the txt fields with the current information from the database.
+     *
      * @param updatedSong
      */
     public void setUpdatedSong(Song updatedSong) {
@@ -215,4 +173,57 @@ public class NewSongController {
             txtfFilePath.setText(updatedSong.getFilePath());
         }
     }
+
+    /**
+     * Code for updating the existing song with new details.
+     */
+    private void updateExistingSong(Song updatedSong){
+        selecetedSong.setTitle(updatedSong.getTitle());
+        selecetedSong.setArtist(updatedSong.getArtist());
+        selecetedSong.setCategory(updatedSong.getCategory());
+        selecetedSong.setFilePath(updatedSong.getFilePath());
+        selecetedSong.setSeconds(updatedSong.getSeconds());
+    }
+
+    /**
+     * Shows an alert dialog with the given title and content.
+     *
+     * @param title
+     * @param content
+     */
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    /**
+     * Method to create a popup for displaying errors
+     *
+     * @param title
+     * @param content
+     * @param e
+     */
+    private void displayError(String title, String content, Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText("There was a problem processing your request.");
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    /**
+     * Code for closing the NewSong window
+     */
+    private void closeWindow(){
+        Stage stage = (Stage) txtfTitle.getScene().getWindow();
+        stage.close();
+    }
+
+
+
+
+
 }
