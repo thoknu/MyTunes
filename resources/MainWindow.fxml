@@ -140,7 +140,7 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Label fx:id="lblVolume" layoutX="57.0" layoutY="82.0" text="🔉">
+      <Label fx:id="lblVolume" layoutX="57.0" layoutY="82.0" text="🔇">
          <font>
             <Font name="Comic Sans MS" size="18.0" />
          </font>

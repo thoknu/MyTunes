@@ -153,6 +153,21 @@ public class MainController {
         sliderVolumeSlider.valueProperty().addListener((Observable, oldValue, newValue) -> {
             if (mediaPlayer != null){
                 mediaPlayer.setVolume(newValue.doubleValue());
+                if (sliderVolumeSlider.valueProperty().getValue() < 0.25 && sliderVolumeSlider.valueProperty().getValue() != 0) {
+                    lblVolume.setText("\uD83D\uDD08");
+                }
+                else if (sliderVolumeSlider.valueProperty().getValue() > 0.75) {
+                    lblVolume.setText("\uD83D\uDD0A");
+                }
+                else if (sliderVolumeSlider.valueProperty().getValue() == 0) {
+                    lblVolume.setText("\uD83D\uDD07");
+                }
+                else {
+                    lblVolume.setText("\uD83D\uDD09");
+                }
+            }
+            else {
+                lblVolume.setText("\uD83D\uDD07");
             }
         });
     }
