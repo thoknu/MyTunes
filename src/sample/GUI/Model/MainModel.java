@@ -177,7 +177,6 @@ public class MainModel {
     public void refreshSongs() {
         try {
             List<Song> allSongs = songManager.readAllSongs();
-
             availableSongs.setAll(allSongs);
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,7 +212,7 @@ public class MainModel {
     /**
      * Refreshes the playlist tableview.
      */
-    private void refreshPlaylists() {
+    public void refreshPlaylists() {
         // Fetch the latest playlist data and update availablePlaylists
         try {
             List<Playlist> updatedPlaylists = playlistManager.getAllPlaylists();

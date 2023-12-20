@@ -713,6 +713,7 @@ public class MainController {
         // Configure NewPlaylistController instances
         if (controller instanceof NewPlaylistController) {
             NewPlaylistController playlistController = (NewPlaylistController) controller;
+            playlistController.setMainModel(mainModel);
             // If the entity is a Playlist, set it in the controller for editing
             if (entity instanceof Playlist) {
                 playlistController.setEditingPlaylist((Playlist) entity);

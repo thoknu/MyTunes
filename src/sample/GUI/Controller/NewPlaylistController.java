@@ -20,9 +20,14 @@ public class NewPlaylistController{
     private TextField txtfName;
     private NewPlaylistModel newPlaylistModel;
     private Playlist editingPlaylist;
+    private MainModel mainModel;
 
     public NewPlaylistController() throws Exception {
         newPlaylistModel = new NewPlaylistModel();
+    }
+
+    public void setMainModel(MainModel mainModel) {
+        this.mainModel = mainModel;
     }
 
     /**
@@ -47,6 +52,7 @@ public class NewPlaylistController{
             try { // Creating a new playlist
                     Playlist newPlaylist = newPlaylistModel.createPlaylist(playlistName);
                     newPlaylistModel.getObservablePlaylists().add(newPlaylist);
+                mainModel.refreshPlaylists();
             } catch (Exception e) {
                 displayError("A problem occured", "A problem occured trying to save the playlist");}
             } else { // Updating an existing playlist
