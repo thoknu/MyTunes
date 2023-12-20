@@ -34,7 +34,6 @@ public class Song {
         this.formattedTime = new SimpleStringProperty(formattedTime());
         setSeconds(seconds);
     }
-
     public String formattedTime() {
         int hours = getSeconds() / 3600;
         int minutes = (getSeconds() % 3600) / 60;
@@ -84,14 +83,6 @@ public class Song {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public void setMinute(int minute) {
-        this.minute = minute;
     }
 
     public int getSeconds() {

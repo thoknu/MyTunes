@@ -395,13 +395,7 @@ public class MainController {
 
         // manage playback based on current status (play, pause, resume)
         if (mediaPlayer != null && !isNewSelection) {
-            if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                mediaPlayer.pause(); // Pause if already playing
-                isPaused = true;
-            } else if (isPaused) {
-                mediaPlayer.play(); // Resume if paused
-                isPaused = false;
-            }
+            handleCurrentSongPlayback();
         } else {
             // Play a new song if a new selection is made
             playNewSelection(selectedPlaylist, selectedSong);

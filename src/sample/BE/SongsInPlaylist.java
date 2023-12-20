@@ -6,7 +6,6 @@ public class SongsInPlaylist {
     private final int playlistID;
     private String title;
     private String artist;
-    private int order;
 
     /**
      * Sets the values of the song in the playlist.
@@ -41,24 +40,8 @@ public class SongsInPlaylist {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getArtist() {
         return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
     }
 
     @Override

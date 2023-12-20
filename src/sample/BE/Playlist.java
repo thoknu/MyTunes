@@ -34,24 +34,12 @@ public class Playlist {
         this.id.set(id);
     }
 
-    public SimpleIntegerProperty idProperty() {
-        return id;
-    }
-
     public String getName() {
         return name.get();
     }
 
     public void setName(String name) {
         this.name.set(name);
-    }
-
-    public SimpleStringProperty nameProperty() {
-        return name;
-    }
-
-    public int getSongCount() {
-        return songCount.get();
     }
 
     public void setSongCount(int songCount) {
@@ -62,21 +50,9 @@ public class Playlist {
         return songCount;
     }
 
-    public int getTotalTime() {
-        return totalTimeInSeconds.get();
-    }
-
     public void setTotalTime(int totalTime) {
         this.totalTimeInSeconds.set(totalTime);
         setFormattedTotalTime(formatTime(totalTime));
-    }
-
-    public SimpleIntegerProperty totalTimeProperty() {
-        return totalTimeInSeconds;
-    }
-
-    public String getFormattedTotalTime() {
-        return formattedTotalTime.get();
     }
 
     public void setFormattedTotalTime(String formattedTime) {

@@ -16,11 +16,5 @@ public interface IPlaylistDataAccess {
 
     public void deletePlaylist(int id) throws Exception;
 
-    public List<SongsInPlaylist> readAllSongsInPlaylist(Playlist playlist) throws Exception;
 
-    public void addSongToPlaylist(int playlistID, int songID) throws SQLException;
-
-    public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException;
-
-    public void swapSongOrder(int playlistID, int order1, int order2) throws SQLException;
 }

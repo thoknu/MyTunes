@@ -100,7 +100,7 @@ public class PlaylistDAO implements IPlaylistDataAccess {
      * @return List<SongsInPlaylist> A list of songs in the specified playlist.
      * @throws SQLException If a database access error occurs.
      */
-    @Override
+
     public List<SongsInPlaylist> readAllSongsInPlaylist(Playlist playlist) throws SQLException {
         List<SongsInPlaylist> allSongsInPlaylist = new ArrayList<>();
         String sql = "SELECT PlaylistSongs.EntryID, PlaylistSongs.SongID, Songs.Title, Songs.Artist " +
@@ -127,7 +127,7 @@ public class PlaylistDAO implements IPlaylistDataAccess {
      * @param songID The ID of the song to be added.
      * @throws SQLException If a database access error occurs.
      */
-    @Override
+
     public void addSongToPlaylist(int playlistID, int songID) throws SQLException {
         String sql = "INSERT INTO PlaylistSongs (PlaylistID, SongID, [Order]) " +
                 "VALUES (?, ?, (SELECT COUNT(*) FROM PlaylistSongs WHERE PlaylistID = ?));";
@@ -147,12 +147,39 @@ public class PlaylistDAO implements IPlaylistDataAccess {
      * @param playlistID The ID of the playlist.
      * @throws SQLException If a database access error occurs.
      */
-    @Override
+
     public void removeSongFromPlaylist(int entryID, int playlistID) throws SQLException {
         try (Connection conn = databaseConnector.getConnection()) {
             int deletedSongOrder = getSongOrderBeforeDelete(conn, entryID);
             deleteSongFromPlaylist(conn, entryID);
             updateSongOrderAfterDelete(conn, playlistID, deletedSongOrder);
+        }
+    }
+
+    /**
+     * Moves a song up in the order within a playlist.
+     *
+     * @param playlistID The ID of the playlist containing the song.
+     * @param currentOrder The current order of the song in the playlist.
+     * @throws SQLException If an error occurs during the order update operation.
+     */
+    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
+        if (currentOrder > 0){
+            swapSongOrder(playlistID, currentOrder, currentOrder - 1);
+        }
+    }
+
+    /**
+     * Moves a song down in the order within a playlist.
+     *
+     * @param playlistID The ID of the playlist containing the song.
+     * @param currentOrder The current order of the song in the playlist.
+     * @throws SQLException If an error occurs during the order update operation.
+     */
+    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
+        int maxOrder = getMaxOrderInPlaylist(playlistID);
+        if (currentOrder < maxOrder){
+            swapSongOrder(playlistID, currentOrder, currentOrder + 1);
         }
     }
 
@@ -307,33 +334,6 @@ public class PlaylistDAO implements IPlaylistDataAccess {
     }
 
     /**
-     * Moves a song up in the order within a playlist.
-     *
-     * @param playlistID The ID of the playlist containing the song.
-     * @param currentOrder The current order of the song in the playlist.
-     * @throws SQLException If an error occurs during the order update operation.
-     */
-    public void moveSongUp(int playlistID, int currentOrder) throws SQLException{
-        if (currentOrder > 0){
-            swapSongOrder(playlistID, currentOrder, currentOrder - 1);
-        }
-    }
-
-    /**
-     * Moves a song down in the order within a playlist.
-     *
-     * @param playlistID The ID of the playlist containing the song.
-     * @param currentOrder The current order of the song in the playlist.
-     * @throws SQLException If an error occurs during the order update operation.
-     */
-    public void moveSongDown(int playlistID, int currentOrder) throws SQLException{
-        int maxOrder = getMaxOrderInPlaylist(playlistID);
-        if (currentOrder < maxOrder){
-            swapSongOrder(playlistID, currentOrder, currentOrder + 1);
-        }
-    }
-
-    /**
      * Swaps the order of two songs in a playlist.
      *
      * @param playlistID The ID of the playlist where the songs are to be swapped.
@@ -341,7 +341,7 @@ public class PlaylistDAO implements IPlaylistDataAccess {
      * @param order2 The order value of the second song to be swapped.
      * @throws SQLException If an error occurs during the update operation.
      */
-    @Override
+
     public void swapSongOrder(int playlistID, int order1, int order2) throws SQLException {
         String sql1 = "UPDATE PlaylistSongs SET [Order] = -1 WHERE PlaylistID = ? AND [Order] = ?";
         String sql2 = "UPDATE PlaylistSongs SET [Order] = ? WHERE PlaylistID = ? AND [Order] = ?";
